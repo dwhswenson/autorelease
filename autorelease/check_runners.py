@@ -1,11 +1,6 @@
 from __future__ import print_function
 import sys
-import os
-import re
 import textwrap
-
-import yaml
-import git  # GitPython
 import packaging.version as vers
 
 import autorelease
@@ -38,47 +33,55 @@ class CheckRunner(object):
             n_fails += self(method, *args, **kwargs)
         return n_fails
 
+    def run_as_test(self, tests=None):
+        n_fails = self.run(tests)
+        if n_fails > 0:
+            exit(1)
 
-class DefaultReleaseCheckRunner(CheckRunner):
-    def __init__(self, versions, repo_path='.', strictness='strict',
-                 output=None):
-        pass
 
-
-class DefaultNonReleaseCheckRunner(CheckRunner):
-    def __init__(self, versions, setup, repo_path='.', strictness='strict',
-                 output=None):
+class DefaultCheckRunner(CheckRunner):
+    def __init__(self, versions, setup, repo_path='.', output=None):
         self.version_checks = autorelease.VersionReleaseChecks(
             versions=versions,
-            strictness=strictness
+            strictness='strict'
         )
+        self.setup = setup
         self.git_repo_checks = autorelease.GitReleaseChecks(
             repo_path=repo_path
         )
-        self.setup = setup
         self.desired_version = vers.Version(versions['setup.py'])
-        super(DefaultNonReleaseCheckRunner, self).__init__(output=output)
+        super(DefaultCheckRunner, self).__init__(output=output)
         self.tests = [
             (
                 self.version_checks.consistency, [],
                 {'include_package': False}
             ),
             (
-                self.version_checks.is_release, [],
-                {'version': self.desired_version,
-                 'expected': False}
-            ),
-            (
-                self.git_repo_checks.in_required_branch, [],
-                {'required_branch': 'master'}
-            ),
-            (
                 self.git_repo_checks.reasonable_desired_version, [],
                 {'desired_version': self.desired_version}
-            ),
-            (
-                autorelease.setup_is_release, [],
-                {'setup': self.setup,
-                 'expected': False}
             )
         ]
+
+    def _is_release_tests(self, expected):
+        return [
+            (self.version_checks.is_release, [],
+             {'version': self.desired_version,
+              'expected': expected}),
+            (autorelease.setup_is_release, [],
+             {'setup': self.setup,
+              'expected': expected})
+        ]
+
+    @property
+    def release_tests(self):
+        return self.tests + self._is_release_tests(expected=True) + [(
+            self.git_repo_checks.in_required_branch, [],
+            {'required_branch': 'stable'}
+        )]
+
+    @property
+    def nonrelease_tests(self):
+        return self.tests + self._is_release_tests(expected=False) + [(
+            self.git_repo_checks.in_required_branch, [],
+            {'required_branch': 'master'}
+        )]
