@@ -15,7 +15,7 @@ class CheckRunner(object):
     def __call__(self, method, *args, **kwargs):
         """Generic method to turn other methods into tests.
         """
-        self.output.write(str(method.func_name) + "... ")
+        self.output.write(str(method.__name__) + "... ")
         msg = method(*args, **kwargs)
         fail = 0
         if bool(msg):
