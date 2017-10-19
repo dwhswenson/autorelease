@@ -53,14 +53,14 @@ class VersionReleaseChecks(object):
         for key in keys_to_check:
             test = self._version(self.versions[key], strictness)
             if test != desired:
-                error_keys += key
+                error_keys += [key]
 
         # make the error message
         msg = ""
         for key in error_keys:
             msg += "Error: desired {d} != {v} ({k})\n".format(
                 d=str(desired),
-                v=str(self._convert_version(self.versions[key], strictness)),
+                v=str(self.versions[key]),
                 k=str(key)
             )
         return msg
