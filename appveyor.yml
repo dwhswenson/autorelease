@@ -32,7 +32,6 @@ build: false
 install:
   # install python
   - SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
-  - "%CMD_IN_ENV% conda config --add channels conda-forge" # gitpython
   # test python version
   - "%CMD_IN_ENV% conda update -yq --all"
   - "%CMD_IN_ENV% conda install -yq \"conda-build<3.0.26\""
@@ -43,5 +42,8 @@ install:
 test_script:
   - "%CMD_IN_ENV% conda build --quiet devtools\\conda-recipe"
   - "%CMD_IN_ENV% cd"
+    # late because there seems to be a problem installing wheel-0.3 from
+    # conda-forge
+  - "%CMD_IN_ENV% conda config --add channels conda-forge" # gitpython
   - "%CMD_IN_ENV% conda install -f requirements.txt"
   - "%CMD_IN_ENV% python release_check.py --branch %APPVEYOR_REPO_BRANCH%"
