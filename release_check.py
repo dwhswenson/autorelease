@@ -14,8 +14,7 @@ repo_path = '.'
 versions = {
     #'package': contact_map.version.version,
     'setup.py': setup.PACKAGE_VERSION,
-    'docs': conf.release,
-    #'conda-recipe': conda_recipe_version('ci/conda-recipe/meta.yaml'),
+    'conda-recipe': conda_recipe_version('devtools/conda-recipe/meta.yaml'),
 }
 
 RELEASE_BRANCHES = ['stable']

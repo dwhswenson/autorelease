@@ -19,6 +19,8 @@
 import os
 import sys
 import sphinx_rtd_theme
+import pkg_resources
+import packaging.version
 # sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../autorelease/'))
 sys.path.append(os.path.abspath('_themes'))
@@ -30,14 +32,8 @@ sys.path.append(os.path.abspath('_themes'))
 #
 # needs_sphinx = '1.0'
 
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
-# built documents.
-#
-# The short X.Y version.
-version = u'0.0.1'
-# The full version, including alpha/beta/rc tags. (dev0 for development)
-release = u'0.0.1.dev0'
+release = pkg_resources.get_distribution('autorelease').version
+version = packaging.version.Version(release).base_version
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
