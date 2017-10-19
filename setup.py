@@ -25,12 +25,28 @@ PACKAGES=['autorelease', 'autorelease.tests']
 
 # This DESCRIPTION is only used if a README.rst hasn't been made from the
 # markdown version
-DESCRIPTION="""
+DESCRIPTION="""Tools to keep the release process clean, based on my own
+release procedures. For details, see the documentation.
 """
-SHORT_DESCRIPTION=""
+SHORT_DESCRIPTION="Tools to keep the release process clean"
 
 # note: leave the triple quotes on separate lines from the classifiers
 CLASSIFIERS="""
+Development Status :: 1 - Planning
+Environment :: Console
+Environment :: MacOS X
+Environment :: Win32 (MS Windows)
+Intended Audience :: Developers
+License :: OSI Approved :: MIT License
+Natural Language :: English
+Operating System :: MacOS :: MacOS X
+Operating System :: Microsoft :: Windows
+Operating System :: POSIX
+Programming Language :: Python :: 2.7
+Programming Language :: Python :: 3.4
+Programming Language :: Python :: 3.5
+Programming Language :: Python :: 3.6
+Topic :: Software Development :: Testing
 """
 ####################### USER SETUP AREA #################################
 
