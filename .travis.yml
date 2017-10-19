@@ -1,0 +1,41 @@
+language: python
+
+branches:
+    only:
+        - master
+        - stable
+
+python:
+    - "2.7"
+    - "3.4"
+    - "3.5"
+    - "3.6"
+
+env:
+    global:
+        - CANONICAL_PYTHON="3.6"
+        - CODECLIMATE=""  # add this later
+
+before_install:
+    # TODO: add proper stuff here
+    - echo "before install"
+
+install:
+    - pip install -r requirements.txt
+    - pip install -e .
+    - pip install -r devtools/pip-install/full_testing.txt
+    - pip list
+
+script:
+    # Test that the import works, then run the test suite
+    - python -c "import autorelease"
+    - python release_check.py --branch ${TRAVIS_BRANCH}
+    #- py.test -vv --cov=contact_map --cov-report xml:cov.xml
+      # TODO: add a step here that does extra tests on stable: check that
+      # the installed version will actually pass tests, too
+
+after_success:
+    - echo "success!"
+    # upload coverage information to various services
+    #- coveralls
+    #- python-codacy-coverage -r cov.xml
