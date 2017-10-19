@@ -72,16 +72,11 @@ class DefaultCheckRunner(CheckRunner):
               'expected': expected})
         ]
 
+    # NB: branch checks don't work on Travis
     @property
     def release_tests(self):
-        return self.tests + self._is_release_tests(expected=True) + [(
-            self.git_repo_checks.in_required_branch, [],
-            {'required_branch': 'stable'}
-        )]
+        return self.tests + self._is_release_tests(expected=True)
 
     @property
     def nonrelease_tests(self):
-        return self.tests + self._is_release_tests(expected=False) + [(
-            self.git_repo_checks.in_required_branch, [],
-            {'required_branch': 'master'}
-        )]
+        return self.tests + self._is_release_tests(expected=False)
