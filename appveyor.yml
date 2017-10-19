@@ -41,3 +41,5 @@ install:
 
 test_script:
   - "%CMD_IN_ENV% conda build --quiet devtools\\conda-recipe"
+  - "%CMD_IN_ENV% cd"
+  - "%CMD_IN_ENV% python release_check.py --branch %APPVEYOR_REPO_BRANCH%"
