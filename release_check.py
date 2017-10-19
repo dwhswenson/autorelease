@@ -3,10 +3,7 @@ from __future__ import print_function
 import sys
 import argparse
 
-sys.path.append("docs")  # for docs/conf.py
-
 import setup
-import conf
 #import contact_map
 from autorelease import DefaultCheckRunner, conda_recipe_version
 
