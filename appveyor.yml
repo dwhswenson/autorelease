@@ -45,5 +45,5 @@ test_script:
     # late because there seems to be a problem installing wheel-0.3 from
     # conda-forge
   - "%CMD_IN_ENV% conda config --add channels conda-forge" # gitpython
-  - "%CMD_IN_ENV% conda install -f requirements.txt"
+  - "%CMD_IN_ENV% conda install -y --file requirements.txt"
   - "%CMD_IN_ENV% python release_check.py --branch %APPVEYOR_REPO_BRANCH%"
