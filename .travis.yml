@@ -43,19 +43,19 @@ after_success:
 jobs:
     include:
         - stage: deploy testpypi
-          if: (branch = stable) and (type = pull_request)
+          if: (branch = master) and (type = pull_request)
           python: "3.6"
           script:
               - echo "TODO: Deploy to testpypi"
               - echo "pypi_upload --test"
         - stage: test testpypi
-          if: (branch = stable) and (type = pull_request)
+          if: (branch = master) and (type = pull_request)
           script:
               - echo "TODO: Test from testpypi"
               - echo "install_miniconda"
               - echo "testpypi_install"
         - stage: deploy pypi
-          if: (branch = stable) and (not type in (pull_request, cron))
+          if: (branch = master) and (not type in (pull_request, cron))
           python: "3.6"
           script: 
               - echo "TODO: Deploy to pypi"
