@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sys
 import textwrap
+import argparse
 import packaging.version as vers
 
 import autorelease
@@ -61,6 +62,7 @@ class DefaultCheckRunner(CheckRunner):
                 {'desired_version': self.desired_version}
             )
         ]
+        self.release_branches = ['stable']
 
     def _is_release_tests(self, expected):
         return [
@@ -71,6 +73,17 @@ class DefaultCheckRunner(CheckRunner):
              {'setup': self.setup,
               'expected': expected})
         ]
+
+    def select_tests_from_sysargs(self):
+        # TODO: this can be cleaned up by separating reusable parts
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--branch', type=str)
+        opts = parser.parse_args()
+        if opts.branch in self.release_branches:
+            tests = self.release_tests
+        else:
+            tests = self.nonrelease_tests
+        return tests
 
     # NB: branch checks don't work on Travis
     @property
