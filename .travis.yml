@@ -1,68 +1,62 @@
 language: python
-
 branches:
-    only:
-        - master
-        - stable
-
+  only:
+  - master
+  - stable
 python:
-    - "2.7"
-    - "3.4"
-    - "3.5"
-    - "3.6"
-
+- '3.6'
+- '2.7'
+- '3.4'
+- '3.5'
 env:
-    global:
-        - CANONICAL_PYTHON="3.6"
-        - CODECLIMATE=""  # add this later
-
+  global:
+  - CANONICAL_PYTHON="3.6"
+  - CODECLIMATE=""
 before_install:
-    # TODO: add proper stuff here
-    - echo "before install"
-
+- echo "before install"
 install:
-    - pip install -r requirements.txt
-    - pip install -e .
-    - pip install -r devtools/pip-install/full_testing.txt
-    - pip list
-
+- pip install -r requirements.txt
+- pip install -e .
+- pip install -r devtools/pip-install/full_testing.txt
+- pip list
 script:
-    # Test that the import works, then run the test suite
-    - python -c "import autorelease"
-    - python release_check.py --branch ${TRAVIS_BRANCH}
-    #- py.test -vv --cov=contact_map --cov-report xml:cov.xml
-      # TODO: add a step here that does extra tests on stable: check that
-      # the installed version will actually pass tests, too
-
+- python -c "import autorelease"
+- python release_check.py --branch ${TRAVIS_BRANCH}
 after_success:
-    - echo "success!"
-    # upload coverage information to various services
-    #- coveralls
-    #- python-codacy-coverage -r cov.xml
-
+- echo "success!"
 jobs:
-    include:
-        - stage: deploy testpypi
-          if: (branch = master) and (type = pull_request)
-          python: "3.6"
-          script:
-              - echo "Deploy to testpypi"
-              - echo "pypi_upload --test"
-        - stage: test testpypi
-          if: (branch = master) and (type = pull_request)
-          python:
-              - "2.7"
-              - "3.4"
-              - "3.5"
-              - "3.6"
-          script:
-              - echo "Test from testpypi"
-              - echo "install_miniconda"
-              - echo "testpypi_install"
-        - stage: deploy pypi
-          if: (branch = master) and (not type in (pull_request, cron))
-          python: "3.6"
-          script: 
-              - echo "Deploy to pypi"
-              - echo "make_github_release"
-              - echo "pypi_upload --tag VERSION"
+  include:
+  - stage: deploy testpypi
+    if: "(branch = master) and (type = pull_request)"
+    python: '3.6'
+    script: skip
+    deploy:
+      provider: pypi
+      distributions: sdist bdist_wheel
+      server: https://testpypi.python.org/legacy/
+      user: dwhswenson
+      password:
+        secure: "2aSzbXSuoaxXLgBVHmuuqt4rGH21WE7V9CRT3cjbJRnEqVKgo/xzPIZ8y+FfLFg5X98VTz4ta45xbhSsJVFuQZ7JrIxDfUVziKtdZZia1DBqGzCG6IAXHQ+x3ZpZRDHNBgsr6xUBeiiUw28SCXzmQESnE5VV8s3FPcFwLOko6uC/dWNSYQlU75b8g+Mz0ESYFOhNAAB3+AEeeatyp9QwgIrfZs1tQeDC6OKH1nrynutTjD4Ga1W3WR2zq1FnvZFu7MybQvls9GjskBG+YwHmxfR41MBnzUvKWwoGsSPyWRbgcUy9PkVA/ykUTH4oQVPuw8p7YKRR0pAhnRj1m2r1y8vN/kljLzasemPtUvOFSbzRYrcrd3Ptm24fIODrRGfI1G3zLBHnVWnlChTU6EYBk33ho9DDeXWmFiLBHJw27EBhde54IyGCl+P+whQEKBoyQXBjZj5KwoptZabTopISZZ13wiJXCY90Nk3mTPx19AGz8YHOQ0JKKCzq7SqA6btb0PfkeOG/Rr+aAU1X3N4d0A92U+8i3H+u3gDylWJN1kHtH4xRWECnh0vX+nB2vidK/CNveAilsvvWEnEtFsQBbLNPa9wKBs7nEBL0ZWUe7YlVoN7BJKF0df3aFqTd9CC/VAncSXd9pk1P7I+h0q67bHHfIk9+3UHbZ8o+h0Sruwo="
+  - stage: test testpypi
+    if: "(branch = master) and (type = pull_request)"
+    python: '3.6'
+    install:
+    - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple
+      autorelease
+    script:
+    - python -c "import autorelease"
+    - echo "run other tests if needed"
+  - stage: cut release
+    if: "(branch = master) and (not type in (pull_request, cron))"
+    python: '3.6'
+    script:
+    - echo "Deploy to pypi"
+    - echo "make_github_release"
+  - stage: deploy pypi
+    if: tag =~ ^v[0-9]+\.
+    deploy:
+      provider: pypi
+      distributions: sdist bdist_wheel
+      user: dwhswenson
+      password:
+        secure: "2aSzbXSuoaxXLgBVHmuuqt4rGH21WE7V9CRT3cjbJRnEqVKgo/xzPIZ8y+FfLFg5X98VTz4ta45xbhSsJVFuQZ7JrIxDfUVziKtdZZia1DBqGzCG6IAXHQ+x3ZpZRDHNBgsr6xUBeiiUw28SCXzmQESnE5VV8s3FPcFwLOko6uC/dWNSYQlU75b8g+Mz0ESYFOhNAAB3+AEeeatyp9QwgIrfZs1tQeDC6OKH1nrynutTjD4Ga1W3WR2zq1FnvZFu7MybQvls9GjskBG+YwHmxfR41MBnzUvKWwoGsSPyWRbgcUy9PkVA/ykUTH4oQVPuw8p7YKRR0pAhnRj1m2r1y8vN/kljLzasemPtUvOFSbzRYrcrd3Ptm24fIODrRGfI1G3zLBHnVWnlChTU6EYBk33ho9DDeXWmFiLBHJw27EBhde54IyGCl+P+whQEKBoyQXBjZj5KwoptZabTopISZZ13wiJXCY90Nk3mTPx19AGz8YHOQ0JKKCzq7SqA6btb0PfkeOG/Rr+aAU1X3N4d0A92U+8i3H+u3gDylWJN1kHtH4xRWECnh0vX+nB2vidK/CNveAilsvvWEnEtFsQBbLNPa9wKBs7nEBL0ZWUe7YlVoN7BJKF0df3aFqTd9CC/VAncSXd9pk1P7I+h0q67bHHfIk9+3UHbZ8o+h0Sruwo="
