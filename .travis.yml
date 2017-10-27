@@ -39,9 +39,13 @@ jobs:
     - stage: deploy testpypi
       if: "(branch = master) and (type = pull_request)"
       python: '3.6'
+      addons:
+        apt_packages:
+          - pandoc
       install:
         - pip install twine
       script: 
+        - pandoc --from=markdown --to=rst --output=README.rst README.md
         - python setup.py sdist bdist_wheel
         - twine upload --repository-url https://test.pypi.org/legacy/ dist/*
     - stage: test testpypi
@@ -61,6 +65,9 @@ jobs:
         - echo "make_github_release"
     - stage: deploy pypi
       if: tag =~ ^v[0-9]+\.
+      addons:
+        apt_packages:
+          - pandoc
       deploy:
         provider: pypi
         distributions: sdist bdist_wheel
