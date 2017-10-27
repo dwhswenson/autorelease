@@ -39,7 +39,8 @@ jobs:
     - stage: deploy testpypi
       if: "(branch = master) and (type = pull_request)"
       python: '3.6'
-      install: skip
+      install:
+        - pip install twine
       script: 
         - python setup.py sdist bdist_wheel
         - twine upload --repository-url https://test.pypi.org/legacy/ dist/*
