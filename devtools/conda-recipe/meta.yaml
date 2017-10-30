@@ -21,6 +21,7 @@ requirements:
     - packaging
     - pyyaml
     - gitpython
+    - requests
     - future
 
 test:
