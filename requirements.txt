@@ -1,4 +1,5 @@
 packaging
 pyyaml
 gitpython
+requests
 future
