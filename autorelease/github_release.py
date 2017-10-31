@@ -85,7 +85,7 @@ class GitHubReleaser(object):
 
     def get_pr_data(self, pr_number):
         pr_url = self.repo_api_url + "issues/" + str(pr_number)
-        pr_data = requests.get(pr_url).json()
+        pr_data = requests.get(pr_url, auth=self.github_user.auth).json()
         return pr_data
 
     def generate_post_data(self, draft=False, prerelease=False):
