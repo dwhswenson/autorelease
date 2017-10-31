@@ -83,14 +83,15 @@ class GitHubReleaser(object):
                 commit = next(commits)
         return int(pr_number)
 
-    def get_pr_body(self, pr_number):
+    def get_pr_data(self, pr_number):
         pr_url = self.repo_api_url + "issues/" + str(pr_number)
-        pr_body = requests.get(pr_url).json()['body']
-        return pr_body
+        pr_data = requests.get(pr_url).json()
+        return pr_data
 
     def generate_post_data(self, draft=False, prerelease=False):
         pr_number = self.find_relevant_pr()
-        pr_body = self.get_pr_body(pr_number)
+        pr_data = self.get_pr_data(pr_number)
+        pr_body = pr_data['body']
         release_notes = self.extract_release_notes(pr_body)
         post_data = {
             'tag_name': self.tag_name,
