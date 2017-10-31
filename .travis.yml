@@ -71,7 +71,7 @@ jobs:
       if: "(branch = stable) and (not type in (pull_request, cron))"
       python: '3.6'
       install:
-        - pip install -r requirements.txt  # not needed in other projects
+        - pip install .  # usually would just need to install autorelease
       script:
         - VERSION=`python setup.py --version`
         - PROJECT=`python setup.py --name`
