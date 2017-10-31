@@ -70,7 +70,8 @@ jobs:
       # from the last PR merged into stable.
       if: "(branch = stable) and (not type in (pull_request, cron))"
       python: '3.6'
-      install: skip
+      install:
+        - pip install -r requirements.txt  # not needed in other projects
       script:
         - VERSION=`python setup.py --version`
         - PROJECT=`python setup.py --name`
