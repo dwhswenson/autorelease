@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import argparse
 import logging
 import re
@@ -34,7 +35,7 @@ if __name__ == "__main__":
 
     logger = make_logger(opts.quiet)
 
-    print opts
+    print(opts)
     
     repo = git.Repo(opts.repo)
 
@@ -70,6 +71,6 @@ if __name__ == "__main__":
     )
 
     if opts.dry:
-        print releaser.generate_post_data()
+        print(releaser.generate_post_data())
     else:
         releaser.create_release()
