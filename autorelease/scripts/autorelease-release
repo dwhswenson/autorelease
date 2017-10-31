@@ -70,7 +70,6 @@ if __name__ == "__main__":
         github_user=github_user
     )
 
-    if opts.dry:
-        print(releaser.generate_post_data())
-    else:
+    print(releaser.generate_post_data())
+    if not opts.dry:
         releaser.create_release()
