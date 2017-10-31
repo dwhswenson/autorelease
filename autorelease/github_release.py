@@ -73,14 +73,14 @@ class GitHubReleaser(object):
         # (assuming certain text in the commit log for PR merges)
         found = False
         commits = self.repo.iter_commits(self.release_target_commitish)
-        commit = commits.next()
+        commit = next(commits)
         while commit and not found:
             match = self.pr_re.match(commit.message)
             if match is not None:
                 found = True
                 pr_number = match.group(1)  # don't like hardcoded 1
             else:
-                commit = commits.next()
+                commit = next(commits)
         return int(pr_number)
 
     def get_pr_body(self, pr_number):
