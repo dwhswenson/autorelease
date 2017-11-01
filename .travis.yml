@@ -92,5 +92,7 @@ jobs:
         provider: pypi
         distributions: sdist bdist_wheel
         user: dwhswenson
+        on:
+            tags: true
         password:
           secure: "VnOfkKXPAGeUfWBQra+WISnmgQV1yiz1ZsOExSqzDvdnOkGZ3ToLYiNn0sEpPgzeeYOx8nkjWUYZ8e8b5oYmU1fQ+5AXJ/b8L5T463IMj0Qe4PL4leCfv9Rqn90NywUwGaYQseeOi8c1yB8XaMqWkBmwjFuHmk0B7PQ5DISWJa9NR9/ydGc5Rp8H0/z40eVkaNksNHZjEfr9FHMt1PFM3KWecH6WkGscSVii+B/dfAcDWOW/UKI1094ckQkGNxtOEOMR6NkiLqFgb6iCOUTfyypELRNHLb2mB5d+6/doy93uJbY9dgFgI0glUrr0Ira/Nn3KGObxezvl5noe9+quD10r4KTl338qINR6H/NGL/t62TDG+hXn7xpGJ9i6UjJt5xmZio22neo0UEchSSvERsAkgChYQJ4N2jA2WVVUKuH+REjDEARjWrhx1u8gMB4vQGjI+47nxEvRiSl/ICwLqHswLK2Y+uqdsDdKZZq5kLxgcIqeNxuUzNj2fAGSlEbZVJEMrEe01hVC44OSiz2mQ8ndaP/Nf6i/n+SHgE+oeIJasHbgyNHpfR36RFR5QsVKu0lKyQjjVsm7HtMzz+JnSfO1hfDK8n94AYjDyEP9T/4Hrwo4KAGKLER9rokyC3psrTWNiefYB1ODYJneTC6Uhyh9Sq/+RlNEtPdN8YjGQAE="
