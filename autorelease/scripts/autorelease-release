@@ -69,8 +69,12 @@ if __name__ == "__main__":
         repo=repo,
         github_user=github_user
     )
-
-    if opts.dry:
-        print(releaser.generate_post_data())
-    else:
+    
+    # testing
+    expected_pr = releaser.find_relevant_pr()
+    print("Expected PR: " + str(expected_pr))
+    print("PR issue: " + str(releaser.get_pr_data(expected_pr)))
+    print("POST DATA:")
+    print(releaser.generate_post_data())
+    if not opts.dry:
         releaser.create_release()

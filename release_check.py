@@ -15,6 +15,7 @@ versions = {
 }
 
 RELEASE_BRANCHES = ['stable']
+RELEASE_TAG = "v" + setup.PACKAGE_VERSION
 
 if __name__ == "__main__":
     checker = DefaultCheckRunner(
@@ -22,7 +23,7 @@ if __name__ == "__main__":
         setup=setup,
         repo_path='.'
     )
-    checker.release_branches = RELEASE_BRANCHES
+    checker.release_branches = RELEASE_BRANCHES + [RELEASE_TAG]
     tests = checker.select_tests_from_sysargs()
 
     skip = []
