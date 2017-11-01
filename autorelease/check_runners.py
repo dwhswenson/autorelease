@@ -52,17 +52,15 @@ class DefaultCheckRunner(CheckRunner):
         )
         self.desired_version = vers.Version(versions['setup.py'])
         super(DefaultCheckRunner, self).__init__(output=output)
-        self.tests = [
-            (
-                self.version_checks.consistency, [],
-                {'include_package': False}
-            ),
-            (
-                self.git_repo_checks.reasonable_desired_version, [],
-                {'desired_version': self.desired_version}
-            )
-        ]
+        self.consistency_test = (
+            self.version_checks.consistency, [],
+            {'include_package': False}
+        )
+        self.tests = [self.consistency_test]
         self.release_branches = ['stable']
+        self.tag_branch = \
+            self.git_repo_checks.tag_from_version(self.desired_version)
+
 
     def _is_release_tests(self, expected):
         return [
@@ -74,24 +72,30 @@ class DefaultCheckRunner(CheckRunner):
               'expected': expected})
         ]
 
+    def _reasonable_desired_version_test(self, allow_equal):
+        return [
+            (
+                self.git_repo_checks.reasonable_desired_version, [],
+                {'desired_version': self.desired_version,
+                 'allow_equal': allow_equal}
+            )
+        ]
+
     def select_tests_from_sysargs(self):
         # TODO: this can be cleaned up by separating reusable parts
         parser = argparse.ArgumentParser()
         parser.add_argument('--branch', type=str)
         opts = parser.parse_args()
         if opts.branch in self.release_branches:
-            print("Testing as release")
-            tests = self.release_tests
+            print("TESTING AS RELEASE")
+            allow_equal = opts.branch == self.tag_branch
+            tests = (self.tests
+                     + self._reasonable_desired_version_test(allow_equal)
+                     + self._is_release_tests(expected=True))
         else:
-            print("Testing as nonrelease")
-            tests = self.nonrelease_tests
+            print("TESTING AS NONRELEASE")
+            tests = (self.tests
+                     + self._reasonable_desired_version_test(False)
+                     + self._is_release_tests(expected=False))
+
         return tests
-
-    # NB: branch checks don't work on Travis
-    @property
-    def release_tests(self):
-        return self.tests + self._is_release_tests(expected=True)
-
-    @property
-    def nonrelease_tests(self):
-        return self.tests + self._is_release_tests(expected=False)
