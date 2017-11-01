@@ -5,6 +5,7 @@ import argparse
 
 import setup
 #import contact_map
+from packaging.version import Version
 from autorelease import DefaultCheckRunner, conda_recipe_version
 
 repo_path = '.'
@@ -15,6 +16,7 @@ versions = {
 }
 
 RELEASE_BRANCHES = ['stable']
+RELEASE_TAG = "v" + Version(setup.PACKAGE_VERSION).base_version
 
 if __name__ == "__main__":
     checker = DefaultCheckRunner(
@@ -22,11 +24,11 @@ if __name__ == "__main__":
         setup=setup,
         repo_path='.'
     )
-    checker.release_branches = RELEASE_BRANCHES
+    checker.release_branches = RELEASE_BRANCHES + [RELEASE_TAG]
     tests = checker.select_tests_from_sysargs()
 
     skip = []
-    skip = [checker.git_repo_checks.reasonable_desired_version]
+    #skip = [checker.git_repo_checks.reasonable_desired_version]
     for test in skip:
         skip_test = [t for t in tests if t[0] == test][0]
         tests.remove(skip_test)

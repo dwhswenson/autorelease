@@ -80,8 +80,10 @@ class DefaultCheckRunner(CheckRunner):
         parser.add_argument('--branch', type=str)
         opts = parser.parse_args()
         if opts.branch in self.release_branches:
+            print("Testing as release")
             tests = self.release_tests
         else:
+            print("Testing as nonrelease")
             tests = self.nonrelease_tests
         return tests
 
