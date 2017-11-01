@@ -8,6 +8,10 @@ class GitReleaseChecks(object):
         self.stable_branch = 'stable'
         self.dev_branch = 'master'
 
+    @staticmethod
+    def tag_from_version(version):
+        return "v" + str(version)
+
     def in_required_branch(self, required_branch='stable'):
         msg = ""
         current_branch = self.repo.active_branch.name
@@ -23,7 +27,7 @@ class GitReleaseChecks(object):
         # TODO: may be better to replace with regex for reusability
         return [vers.Version(v) for v in tag_versions]
 
-    def reasonable_desired_version(self, desired_version):
+    def reasonable_desired_version(self, desired_version, allow_equal=False):
         """
         Determine whether the desired version is a reasonable next version.
 
@@ -49,7 +53,13 @@ class GitReleaseChecks(object):
 
         update_str = str(max_version) + " -> " + str(desired_version)
 
-        if vers.Version(desired_version) < vers.Version(max_version):
+        v_desired = vers.Version(desired_version)
+        v_max = vers.Version(max_version)
+
+        if allow_equal and v_desired == v_max:
+            return ""
+
+        if v_desired < v_max:
             return ("Bad update: New version doesn't increase on last tag: "
                     + update_str + "\n")
 
