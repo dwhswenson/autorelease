@@ -33,7 +33,7 @@ install:
 
 script:
   - python -c "import autorelease"
-  - echo $TRAVIS_EVENT_TYPE
+  - autorelease-release -h
   - python release_check.py --branch ${TRAVIS_BRANCH} --event ${TRAVIS_EVENT_TYPE}
 
 after_success:
@@ -78,7 +78,7 @@ jobs:
       script:
         - VERSION=`python setup.py --version`
         - PROJECT=`python setup.py --name`
-        - python autorelease/scripts/autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
+        - autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
     - stage: deploy pypi
       # This stage runs when a version-labelled tag is made. It deploys the
       # package to PyPI.

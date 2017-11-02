@@ -174,6 +174,11 @@ if __name__ == "__main__":
         package_data={},
         ext_modules=[],
         scripts=[],
+        entry_points={
+            'console_scripts': [
+                'autorelease-release = autorelease.scripts.release:main'
+            ]
+        },
         description=SHORT_DESCRIPTION,
         long_description=DESCRIPTION,
         platforms=['Linux', 'Mac OS X', 'Unix', 'Windows'],
