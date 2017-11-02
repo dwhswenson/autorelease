@@ -85,10 +85,12 @@ class DefaultCheckRunner(CheckRunner):
         # TODO: this can be cleaned up by separating reusable parts
         parser = argparse.ArgumentParser()
         parser.add_argument('--branch', type=str)
+        parser.add_argument('--event', type=str)
         opts = parser.parse_args()
         if opts.branch in self.release_branches:
             print("TESTING AS RELEASE")
-            allow_equal = opts.branch == self.tag_branch
+            allow_equal = (opts.event == 'cron'
+                           or opts.branch == self.tag_branch)
             tests = (self.tests
                      + self._reasonable_desired_version_test(allow_equal)
                      + self._is_release_tests(expected=True))
