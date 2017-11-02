@@ -33,7 +33,7 @@ install:
 
 script:
   - python -c "import autorelease"
-  - python release_check.py --branch ${TRAVIS_BRANCH}
+  - python release_check.py --branch ${TRAVIS_BRANCH} --event ${TRAVIS_EVENT}
 
 after_success:
   - echo "success!"
@@ -91,6 +91,7 @@ jobs:
       deploy:
         provider: pypi
         distributions: sdist bdist_wheel
+        skip_cleanup: true  # need the readme.rst from the script stage
         user: dwhswenson
         on:
             tags: true
