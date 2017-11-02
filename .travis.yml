@@ -33,6 +33,7 @@ install:
 
 script:
   - python -c "import autorelease"
+  - echo $TRAVIS_EVENT
   - python release_check.py --branch ${TRAVIS_BRANCH} --event ${TRAVIS_EVENT}
 
 after_success:
