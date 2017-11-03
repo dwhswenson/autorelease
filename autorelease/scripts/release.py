@@ -29,7 +29,7 @@ def github_url_to_owner_repo(url):
     match = re.match(pattern, url)
     return match.groups()
 
-if __name__ == "__main__":
+def main():
     parser = make_parser()
     opts = parser.parse_args()
 
@@ -78,3 +78,6 @@ if __name__ == "__main__":
     print(releaser.generate_post_data())
     if not opts.dry:
         releaser.create_release()
+
+if __name__ == "__main__":
+    main()
