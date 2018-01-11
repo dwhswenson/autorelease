@@ -8,6 +8,10 @@ from .github_release import (
     GitHubRepoBase, GitHubReleaser, ProjectOptions, GitHubUser
 )
 
+from .release_notes import ReleaseNoteWriter
+
+from .script_utils import AutoreleaseParsingHelper
+
 from .utils import conda_recipe_version
 
 from . import scripts

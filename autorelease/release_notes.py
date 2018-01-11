@@ -5,27 +5,23 @@ import collections
 import yaml
 import requests
 
-import autorelease
+from .github_release import GitHubRepoBase, GitHubUser, ProjectOptions
 
-class ReleaseNoteWriter(autorelease.GitHubRepoBase):
-    def __init__(self, project, github_user, config):
-        super(ReleaseNoteWriter, self).__init__(project, github_user)
+class ReleaseNoteWriter(GitHubRepoBase):
+    def __init__(self, config, project=None, github_user=None):
         if isinstance(config, str):
             with open(config) as f:
                 config = yaml.load(f.read())
 
         self.config = config
+        if project is None and 'project' in config.keys():
+            project = ProjectOptions(**config['project'])
+        if github_user is None and 'github_user' in config.keys():
+            github_user = GitHubUser(**config['github_user'])
 
+        super(ReleaseNoteWriter, self).__init__(project, github_user)
         self._latest_release_tag_name = None
         self._latest_release_commit_date = None
-
-    @classmethod
-    def from_full_config(cls, filename):
-        with open(filename) as f:
-            options = yaml.load(f.read())
-        github_user = autorelease.GitHubUser(**options['github_user'])
-        project = autorelease.ProjectOptions(**options['project'])
-        return cls(project, github_user, options['config'])
 
     def label_organized_merged_pulls(self, since=None):
         # the implementation challenge is that the return info from pulls
