@@ -15,8 +15,27 @@ class GitHubUser(namedtuple('GitHubUser', ['username', 'token'])):
     def auth(self):
         return (self.username, self.token)
 
+class GitHubRepoBase(object):
+    """
+    Parameters
+    ----------
+    project: :class:`.ProjectOptions`
+    github_user: :class:`.GitHubUser`
+    """
+    def __init__(self, project, github_user):
+        github_api_url = "https://api.github.com/"
+        self.project = project
+        self.repo_api_url = (github_api_url + "repos/" + project.repo_owner
+                             + "/" + project.repo_name + "/")
+        self.github_user = github_user
 
-class GitHubReleaser(object):
+    def api_get(self, url_ending, params=None):
+        return requests.get(url=self.repo_api_url + url_ending,
+                            params=params,
+                            auth=self.github_user.auth)
+
+
+class GitHubReleaser(GitHubRepoBase):
     """
     Parameters
     ----------
@@ -30,17 +49,12 @@ class GitHubReleaser(object):
     release_target_commitish : str
     """
     def __init__(self, project, version, repo, github_user):
-        github_api_url = "https://api.github.com/"
-        self.project = project
+        super(GitHubReleaser, self).__init__(project, github_user)
         self.version = version
-        self.repo = repo
-        self.repo_api_url = (github_api_url + "repos/" + project.repo_owner
-                             + "/" + project.repo_name + "/")
-        self.github_user = github_user
-
         # pr_re set in pr_pattern
         self._pr_pattern = None
         self.pr_re = None
+        self.repo = repo
 
         self.pr_pattern = "Merge pull request #([0-9]+)"
         self.release_target_commitish = "stable"
