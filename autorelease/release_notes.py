@@ -44,10 +44,7 @@ class ReleaseNoteWriter(GitHubRepoBase):
         # the implementation challenge is that the return info from pulls
         # doesn't currently include info about labels -- that is contains in
         # the return info from issues (all pulls are issues).
-        params = {'state': 'closed'}
-        if since != '':
-            params.update({'since': since})
-
+        params = {'state': 'closed', 'since': since}
         recent_pulls = self.api_get("pulls", params=params).json()
         recent_pulls = self.filter_recent_pulls(recent_pulls, since)
         recent_issues = self.api_get("issues", params=params).json()
@@ -56,6 +53,7 @@ class ReleaseNoteWriter(GitHubRepoBase):
         for pull in recent_pulls:
             issue = issues_by_number[pull['number']]
             label_names = [label['name'] for label in issue['labels']]
+            label_names = [None] if not label_names else label_names
             for label in label_names:
                 desired_pulls[label] += [pull]
             if not label_names:
@@ -107,14 +105,8 @@ class ReleaseNoteWriter(GitHubRepoBase):
                 pull_to_labels[pull['number']] += [label]
         return pull_to_labels
 
-    def release_notes_from_pulls(self, pull_dict):
+    def output_for_known_labels(self, pull_dict, pull_to_labels):
         out_str = ""
-        label_categories = [lbl['label'] for lbl in self.config['labels']]
-        unknown_labels = set(pull_dict) - set(label_categories)
-        pull_to_labels = self._pull_to_labels(pull_dict)
-
-        treated_pulls = []
-
         for lbl in self.config['labels']:
             label = lbl['label']
             out_str += "\n# " + lbl['heading'] + "\n"
@@ -122,11 +114,11 @@ class ReleaseNoteWriter(GitHubRepoBase):
                 pull_labels = set(pull_to_labels[pull['number']])
                 extra_labels = pull_labels - set([label])
                 out_str += self.write_pull_line(pull, extra_labels)
-                treated_pulls.append(pull['number'])
+        return out_str
 
-        if len(treated_pulls) != len(pull_to_labels):
-            out_str += "\n-----\n\n# Pulls with unknown labels\n"
-
+    def output_for_unknown_labels(self, pull_dict, unknown_labels,
+                                  treated_pulls):
+        out_str = "\n-----\n\n# Pulls with unknown labels\n"
         for label in unknown_labels:
             untreated = [pull for pull in pull_dict[label]
                          if pull['number'] not in treated_pulls]
@@ -135,7 +127,23 @@ class ReleaseNoteWriter(GitHubRepoBase):
             for pull in untreated:
                 out_str += self.write_pull_line(pull)
                 treated_pulls.append(pull['number'])
+        return out_str
 
+    def release_notes_from_pulls(self, pull_dict):
+        config_labels = [lbl['label'] for lbl in self.config['labels']]
+        unknown_labels = set(pull_dict) - set(config_labels)
+        pull_to_labels = self._pull_to_labels(pull_dict)
+
+        config_label_pulls = sum([pull_dict[lbl]
+                                  for lbl in config_labels], [])
+        treated_pulls = set([p['number'] for p in config_label_pulls])
+
+        out_str = self.output_for_known_labels(pull_dict, pull_to_labels)
+
+        if len(treated_pulls) != len(pull_to_labels):
+            out_str += self.output_for_unknown_labels(pull_dict,
+                                                      unknown_labels,
+                                                      list(treated_pulls))
         return out_str
 
     def write_release_notes(self, outfile=None):
