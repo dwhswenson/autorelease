@@ -13,11 +13,11 @@ def make_parser():
 
 def main():
     auto_parser = make_parser()
-    auto_parser.parse_args()
-    writer = ReleaseNoteWriter(config=auto_parser.opts.conf,
-                               project=auto_parser.project,
-                               github_user=auto_parser.github_user)
-    writer.write_release_notes(outfile=auto_parser.opts.output)
+    opts = auto_parser.parse_args()
+    writer = ReleaseNoteWriter(config=opts.conf,
+                               project=opts.project,
+                               github_user=opts.github_user)
+    writer.write_release_notes(outfile=opts.output)
 
 if __name__ == "__main__":
     main()

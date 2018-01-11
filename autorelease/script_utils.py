@@ -12,29 +12,7 @@ class AutoreleaseParsingHelper(object):
         self.parser = parser
         self.parser.add_argument('-q', '--quiet', action='store_true')
 
-        self._upstream = None
-        self._origin = None
-        self.opts = None
-
-        self._github_user = None
-        self._project = None
-        self._repo = None
-
         self.make_objects = []
-
-    def _remotes(self, internal):
-        if internal is None and self.repo is not None:
-            self.set_upstream_origin()
-
-    @property
-    def upstream(self):
-        self._remotes(self._upstream)
-        return self._upstream
-
-    @property
-    def origin(self):
-        self._remotes(self._origin)
-        return self._origin
 
     def add_github_parsing(self):
         self.parser.add_argument('-u', '--username', type=str,
@@ -52,6 +30,39 @@ class AutoreleaseParsingHelper(object):
     def add_repo_parsing(self):
         self.parser.add_argument('--repo', type=str, default='.')
 
+    def parse_args(self, args=None):
+        opts = self.parser.parse_args(args=args)
+        return AutoreleaseParsedArguments(opts, self.make_objects)
+
+
+class AutoreleaseParsedArguments(object):
+    def __init__(self, opts, make_objects):
+        self.opts = opts
+        self.make_objects = make_objects
+
+        self._upstream = None
+        self._origin = None
+        self._github_user = None
+        self._project = None
+        self._repo = None
+
+    def __getattr__(self, name):
+        return getattr(self.opts, name)
+
+    def _remotes(self, internal):
+        if internal is None and self.repo is not None:
+            self.set_upstream_origin()
+
+    @property
+    def upstream(self):
+        self._remotes(self._upstream)
+        return self._upstream
+
+    @property
+    def origin(self):
+        self._remotes(self._origin)
+        return self._origin
+
     def set_upstream_origin(self, repo=None):
         if repo is None:
             repo = self.repo
@@ -67,10 +78,6 @@ class AutoreleaseParsingHelper(object):
         assert len(upstream) == len(origin) == 1
         self.upstream = upstream[0]
         self.origin = origin[0]
-
-    def parse_args(self, args=None):
-        self.opts = self.parser.parse_args(args=args)
-        return self.opts
 
     def guess_project(self):
         guess = {k: None
