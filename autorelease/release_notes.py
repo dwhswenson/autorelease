@@ -56,8 +56,6 @@ class ReleaseNoteWriter(GitHubRepoBase):
             label_names = [None] if not label_names else label_names
             for label in label_names:
                 desired_pulls[label] += [pull]
-            if not label_names:
-                desired_pulls[None] += [pull]
 
         return desired_pulls
 
