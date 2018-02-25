@@ -34,6 +34,29 @@ class GitHubRepoBase(object):
                             params=params,
                             auth=self.github_user.auth)
 
+    def api_get_json_all(self, url_ending, params=None):
+        # only for issues, which limit to 30 per return
+        my_params = {}
+        my_params.update(params)
+        my_params.update({'sort': 'updated', 'direction': 'asc'})
+        results = {}  # we use a dict to easily look up by number
+        # actual return is list of values
+        should_continue = True
+        while should_continue:
+            local_results = self.api_get(url_ending, my_params).json()
+            if local_results:
+                since = local_results[-1]['updated_at']
+                # print(local_results[-1]['updated_at'],
+                      # local_results[0]['updated_at'])
+                my_params['since'] = since
+            local_result_dict = {result['number']: result
+                                 for result in local_results
+                                 if result['number'] not in results}
+            results.update(local_result_dict)
+            should_continue = local_result_dict
+            # print(results.keys())
+        return list(results.values())
+
 
 class GitHubReleaser(GitHubRepoBase):
     """

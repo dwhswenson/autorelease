@@ -4,6 +4,8 @@ import sys
 import collections
 import yaml
 import requests
+import dateutil.parser
+import datetime
 
 from .github_release import GitHubRepoBase, GitHubUser, ProjectOptions
 
@@ -44,11 +46,24 @@ class ReleaseNoteWriter(GitHubRepoBase):
         # the implementation challenge is that the return info from pulls
         # doesn't currently include info about labels -- that is contains in
         # the return info from issues (all pulls are issues).
+
+        # because of problems that the pull close date doesn't always match
+        # the issue close date (I see a difference of seconds), we look for
+        # any pulls/issues closed a minute before the last release. User can
+        # manually remove problematic things.
+        since_datetime = dateutil.parser.parse(since)
+        delta = datetime.timedelta(0, 60)
+        since = (since_datetime - delta).isoformat()
         params = {'state': 'closed', 'since': since}
         recent_pulls = self.api_get("pulls", params=params).json()
+        # print([(p['number'], p['merged_at']) for p in recent_pulls])
         recent_pulls = self.filter_recent_pulls(recent_pulls, since)
-        recent_issues = self.api_get("issues", params=params).json()
+        issue_params = {'filter': 'all'}
+        issue_params.update(params)
+        recent_issues = self.api_get_json_all("issues", params=issue_params)
+        # print([(iss['number'], iss['closed_at']) for iss in recent_issues])
         issues_by_number = {iss['number']: iss for iss in recent_issues}
+        # print(list(issues_by_number.keys()))
         desired_pulls = collections.defaultdict(list)
         for pull in recent_pulls:
             issue = issues_by_number[pull['number']]
