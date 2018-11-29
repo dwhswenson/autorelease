@@ -21,6 +21,7 @@ requirements:
     - packaging
     - pyyaml
     - gitpython
+    - python-dateutil
     - requests
     - future
 
