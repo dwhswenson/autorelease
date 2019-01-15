@@ -72,12 +72,14 @@ class DefaultCheckRunner(CheckRunner):
               'expected': expected})
         ]
 
-    def _reasonable_desired_version_test(self, allow_equal):
+    def _reasonable_desired_version_test(self, allow_equal,
+                                         allow_patch_skip=False):
         return [
             (
                 self.git_repo_checks.reasonable_desired_version, [],
                 {'desired_version': self.desired_version,
-                 'allow_equal': allow_equal}
+                 'allow_equal': allow_equal,
+                 'allow_patch_skip': allow_patch_skip}
             )
         ]
 
@@ -86,13 +88,17 @@ class DefaultCheckRunner(CheckRunner):
         parser = argparse.ArgumentParser()
         parser.add_argument('--branch', type=str)
         parser.add_argument('--event', type=str)
+        parser.add_argument('--allow-patch-skip', action='store_true',
+                            default=False)
         opts = parser.parse_args()
         if opts.branch in self.release_branches:
             print("TESTING AS RELEASE")
             allow_equal = (opts.event == 'cron'
                            or opts.branch == self.tag_branch)
             tests = (self.tests
-                     + self._reasonable_desired_version_test(allow_equal)
+                     + self._reasonable_desired_version_test(
+                         allow_equal=allow_equal,
+                         allow_patch_skip=opts.allow_patch_skip)
                      + self._is_release_tests(expected=True))
         else:
             print("TESTING AS NONRELEASE")
