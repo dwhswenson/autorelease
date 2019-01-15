@@ -1,6 +1,26 @@
 import git  # GitPython
 import packaging.version as vers
 
+def skipped_version(old_version, new_version, allow_patch_skip=False):
+    old_major, old_minor, old_patch = old_version
+    new_major, new_minor, new_patch = new_version
+
+    bad_update = False
+
+    if new_major == old_major:
+        if new_minor == old_minor:
+            if not allow_patch_skip and new_patch != old_patch + 1:
+                bad_update = True
+
+        elif new_patch != 0 and new_minor != old_minor + 1:
+            bad_update = True
+
+    elif new_minor != 0 != new_patch and new_major != old_major + 1:
+        bad_update = True
+
+    return bad_update
+
+
 class GitReleaseChecks(object):
     def __init__(self, repo_path='.'):
         self.repo_path = repo_path
@@ -27,7 +47,8 @@ class GitReleaseChecks(object):
         # TODO: may be better to replace with regex for reusability
         return [vers.Version(v) for v in tag_versions]
 
-    def reasonable_desired_version(self, desired_version, allow_equal=False):
+    def reasonable_desired_version(self, desired_version, allow_equal=False,
+                                  allow_patch_skip=False):
         """
         Determine whether the desired version is a reasonable next version.
 
@@ -63,18 +84,9 @@ class GitReleaseChecks(object):
             return ("Bad update: New version doesn't increase on last tag: "
                     + update_str + "\n")
 
-        bad_update = False
-
-        if new_major == old_major:
-            if new_minor == old_minor:
-                if new_patch != old_patch + 1:
-                    bad_update = True
-
-            elif new_patch != 0 and new_minor != old_minor + 1:
-                bad_update = True
-
-        elif new_minor != 0 != new_patch and new_major != old_major + 1:
-            bad_update = True
+        bad_update = skipped_version((old_major, old_minor, old_patch),
+                                     (new_major, new_minor, new_patch),
+                                     allow_patch_skip)
 
         msg = ""
         if bad_update:
