@@ -20,9 +20,9 @@ requirements:
     - python
     - packaging
     - pyyaml
-    - gitpython==2.1.7
-    - requests==2.18
-    - future==0.16
+    - gitpython
+    - requests
+    - future
 
 test:
   requires:
