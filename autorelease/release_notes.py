@@ -10,12 +10,14 @@ import datetime
 from .github_release import GitHubRepoBase, GitHubUser, ProjectOptions
 
 class ReleaseNoteWriter(GitHubRepoBase):
-    def __init__(self, config, project=None, github_user=None):
+    def __init__(self, config, since_release=None, project=None,
+                 github_user=None):
         if isinstance(config, str):
             with open(config) as f:
-                config = yaml.load(f.read())
+                config = yaml.load(f.read(), Loader=yaml.SafeLoader)
 
         self.config = config
+        self.since_release = since_release
         project = self._apply_config_key(project, 'project', ProjectOptions)
         github_user = self._apply_config_key(github_user, 'github_user',
                                              GitHubUser)
@@ -83,9 +85,17 @@ class ReleaseNoteWriter(GitHubRepoBase):
 
     @property
     def latest_release_commit_date(self):
-        # note that we use the date of the commit of the last release, not
-        # the date of the release itself (can release long after the commit)
-        latest_release =  self.api_get("releases/latest").json()
+        return self.set_release_info()
+
+    def release_commit_date(self, release_name=None):
+        # note that we use the date of the commit of the release, not the
+        # date of the release itself (can release long after the commit)
+        if release_name is None:
+            release_name = "latest"
+        else:
+            release_name = "tags/" + release_name
+
+        latest_release =  self.api_get("releases/" + release_name).json()
         if self._latest_release_tag_name != latest_release['tag_name']:
             self._latest_release_tag_info(latest_release['tag_name'])
             latest_tag_commit_sha = \
@@ -164,7 +174,7 @@ class ReleaseNoteWriter(GitHubRepoBase):
             outfile = sys.stdout
         elif isinstance(outfile, str):
             outfile = open(outfile)
-        release_date = self.latest_release_commit_date
+        release_date = self.release_commit_date(self.since_release)
         pull_dict = self.label_organized_merged_pulls(since=release_date)
         notes = self.release_notes_from_pulls(pull_dict)
         outfile.write(notes)
