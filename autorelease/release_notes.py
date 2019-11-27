@@ -42,6 +42,7 @@ class ReleaseNoteWriter(GitHubRepoBase):
         latest_tag_sha = self._latest_release_tag['commit']['sha']
         pulls = [p for p in pulls
                  if p['merge_commit_sha'] != latest_tag_sha]
+        # print([p['number'] for p in pulls])
         return pulls
 
     def label_organized_merged_pulls(self, since=''):
@@ -58,6 +59,10 @@ class ReleaseNoteWriter(GitHubRepoBase):
         since = (since_datetime - delta).isoformat()
         params = {'state': 'closed', 'since': since}
         recent_pulls = self.api_get("pulls", params=params).json()
+        # print([p['number'] for p in recent_pulls], len(recent_pulls))
+        # remove closed (unmerged) pulls
+        recent_pulls = [p for p in recent_pulls if p['merged_at'] is not None]
+        # print([p['number'] for p in recent_pulls], len(recent_pulls))
         # print([(p['number'], p['merged_at']) for p in recent_pulls])
         recent_pulls = self.filter_recent_pulls(recent_pulls, since)
         issue_params = {'filter': 'all'}

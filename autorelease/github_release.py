@@ -43,7 +43,8 @@ class GitHubRepoBase(object):
         # actual return is list of values
         should_continue = True
         while should_continue:
-            local_results = self.api_get(url_ending, my_params).json()
+            local_results_req = self.api_get(url_ending, my_params)
+            local_results = local_results_req.json()
             if local_results:
                 since = local_results[-1]['updated_at']
                 # print(local_results[-1]['updated_at'],
