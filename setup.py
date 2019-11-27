@@ -176,7 +176,8 @@ if __name__ == "__main__":
         scripts=[],
         entry_points={
             'console_scripts': [
-                'autorelease-release = autorelease.scripts.release:main'
+                'autorelease-release = autorelease.scripts.release:main',
+                'write-release-notes = autorelease.scripts.write_release_notes:main'
             ]
         },
         description=SHORT_DESCRIPTION,
