@@ -1,0 +1,59 @@
+jobs:
+  include:
+    - stage: deploy testpypi
+      # This stage runs when you make a PR to stable. It tests that the
+      # deployment to testpypi works.
+      if: "(branch = stable) and (type = pull_request)"
+      #python: '3.6'
+      addons:
+        apt_packages:
+          - pandoc
+      install:
+        - pip install twine
+      script: 
+        - pandoc --from=markdown --to=rst --output=README.rst README.md
+        - python setup.py sdist bdist_wheel
+        #- twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+    - stage: test testpypi
+      # This stage run when you make a PR to stable; after the package has
+      # been deployed to testpypi. It checks that the deployed package
+      # works.
+      if: "(branch = stable) and (type = pull_request)"
+      #python: '3.6'
+      install:
+        - export PROJECT=`python setup.py --name`
+        - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
+        - echo INSTALLED CORRECTLY!
+      script:
+        - cd ~
+        - python -c "import $PROJECT"
+        - echo "py.test --pyargs $PROJECT"  # if I had py.test stuff
+    - stage: cut release
+      # This stage runs after you merge a PR into stable. It cuts the GitHub
+      # release based on the current stable branch and the release notes
+      # from the last PR merged into stable.
+      if: "(branch = stable) and (not type in (pull_request, cron))"
+      #python: '3.6'
+      install:
+        - pip install autorelease
+      script:
+        - VERSION=`python setup.py --version`
+        - PROJECT=`python setup.py --name`
+        - autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
+    - stage: deploy pypi
+      # This stage runs when a version-labelled tag is made. It deploys the
+      # package to PyPI.
+      if: tag =~ ^v[0-9]+\.
+      addons:
+        apt_packages:
+          - pandoc
+      install: skip
+      script:
+          - pandoc --from=markdown --to=rst --output=README.rst README.md
+      deploy:
+        provider: pypi
+        distributions: sdist bdist_wheel
+        skip_cleanup: true  # need the readme.rst from the script stage
+        user: $TWINE_USERNAME
+        on:
+            tags: true
