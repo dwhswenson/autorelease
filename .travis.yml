@@ -16,6 +16,7 @@ branches:
 jobs:
   include:
     - stage: test testpypi
+      if: "(branch = stable) and (type = pull_request)"
       script:
         - echo MERGED CORRECTLY!
 

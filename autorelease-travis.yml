@@ -4,7 +4,7 @@ jobs:
       # This stage runs when you make a PR to stable. It tests that the
       # deployment to testpypi works.
       if: "(branch = stable) and (type = pull_request)"
-      python: '3.6'
+      #python: '3.6'
       addons:
         apt_packages:
           - pandoc
@@ -19,12 +19,12 @@ jobs:
       # been deployed to testpypi. It checks that the deployed package
       # works.
       if: "(branch = stable) and (type = pull_request)"
-      python: '3.6'
+      #python: '3.6'
       install:
         - export PROJECT=`python setup.py --name`
         - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
+        - echo INSTALLED CORRECTLY!
       script:
-        - $TEST_SCRIPT
         - cd ~
         - python -c "import " $PROJECT
         - echo "py.test --pyargs " $PROJECT  # if I had py.test stuff
@@ -33,7 +33,7 @@ jobs:
       # release based on the current stable branch and the release notes
       # from the last PR merged into stable.
       if: "(branch = stable) and (not type in (pull_request, cron))"
-      python: '3.6'
+      #python: '3.6'
       install:
         - pip install autorelease
       script:
