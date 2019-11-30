@@ -24,6 +24,7 @@ jobs:
         - export PROJECT=`python setup.py --name`
         - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
       script:
+        - $TEST_SCRIPT
         - cd ~
         - python -c "import " $PROJECT
         - echo "py.test --pyargs " $PROJECT  # if I had py.test stuff

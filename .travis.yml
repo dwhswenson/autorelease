@@ -13,9 +13,16 @@ branches:
   - stable
   - /^v\d+(\.\d+)+$/
 
+jobs:
+  include:
+    - stage: test testpypi
+      script:
+        - echo MERGED CORRECTLY!
+
 env:
   global:
     - CANONICAL_PYTHON="3.8"
+    - RELEASE_BRANCH="stable"
     - TWINE_USERNAME="dwhswenson"
     - TEST_SCRIPT="echo TESTS"
     # TWINE_PASSWORD
