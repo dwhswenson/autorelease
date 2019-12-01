@@ -9,7 +9,7 @@ from setuptools import setup
 ####################### USER SETUP AREA #################################
 # * VERSION: base version (do not include .dev0, etc -- that's automatic)
 # * IS_RELEASE: whether this is a release
-VERSION = "0.0.12"
+VERSION = "0.0.15"
 IS_RELEASE = False
 
 DEV_NUM = 0  # always 0: we don't do public (pypi) .dev releases
@@ -17,7 +17,8 @@ PRE_TYPE = ""  # a, b, or rc (although we rarely release such versions)
 PRE_NUM = 0
 
 # REQUIREMENTS should list any required packages
-REQUIREMENTS=['packaging', 'pyyaml', 'gitpython', 'future', 'requests']
+REQUIREMENTS=['packaging', 'pyyaml', 'gitpython', 'future', 'requests',
+              'python-dateutil']
 
 # PACKAGES should list any subpackages of the code. The assumption is that
 # package.subpackage is located at package/subpackage
@@ -184,7 +185,7 @@ if __name__ == "__main__":
         long_description=DESCRIPTION,
         platforms=['Linux', 'Mac OS X', 'Unix', 'Windows'],
         install_requires=REQUIREMENTS,
-        requires=REQUIREMENTS,
+        # requires=REQUIREMENTS,
         tests_require=["pytest", "pytest-cov", "python-coveralls"],
         classifiers=CLASSIFIERS.split('\n')[1:-1]
     )
