@@ -34,7 +34,7 @@ install:
 script:
   - python -c "import autorelease"
   - autorelease-release -h
-  - python release_check.py --branch ${TRAVIS_BRANCH} --event ${TRAVIS_EVENT_TYPE}
+  - python release_check.py --branch ${TRAVIS_BRANCH} --event ${TRAVIS_EVENT_TYPE} --allow-patch-skip
 
 after_success:
   - echo "success!"

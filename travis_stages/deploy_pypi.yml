@@ -17,3 +17,4 @@ jobs:
         user: $TWINE_USERNAME
         on:
             tags: true
+        password: $TWINE_PASSWORD
