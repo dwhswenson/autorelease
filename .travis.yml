@@ -13,12 +13,10 @@ branches:
   - stable
   - /^v\d+(\.\d+)+$/
 
-jobs:
-  include:
-    - stage: test testpypi
-      if: "(branch = stable) and (type = pull_request)"
-      script:
-        - echo MERGED CORRECTLY!
+#_autorelease: 
+  #- &test_testpypi
+    #script:
+    #- echo MERGED CORRECTLY!
 
 env:
   global:
