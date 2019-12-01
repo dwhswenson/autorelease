@@ -11,5 +11,3 @@ jobs:
         - VERSION=`python setup.py --version`
         - PROJECT=`python setup.py --name`
         - autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
-
-

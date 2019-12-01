@@ -14,5 +14,5 @@ jobs:
           else
             cd ~
             python -c "import $PROJECT"
-            #py.test --pyargs $PROJECT
+            py.test --pyargs $PROJECT
           fi
