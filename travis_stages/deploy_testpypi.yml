@@ -1,0 +1,17 @@
+jobs:
+  include:
+    - stage: deploy testpypi
+      # This stage runs when you make a PR to stable. It tests that the
+      # deployment to testpypi works.
+      if: "(branch = stable) and (type = pull_request)"
+      addons:
+        apt_packages:
+          - pandoc
+      install:
+        - pip install twine
+      script: 
+        - pandoc --from=markdown --to=rst --output=README.rst README.md
+        - python setup.py sdist bdist_wheel
+        #- twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+

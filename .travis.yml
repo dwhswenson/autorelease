@@ -13,13 +13,9 @@ branches:
   - stable
   - /^v\d+(\.\d+)+$/
 
-#_autorelease: 
-  #- &test_testpypi
-    #script:
-    #- echo MERGED CORRECTLY!
-
 env:
   global:
+    - AUTORELEASE_TEST_TESTPYPI="echo OVERRIDE SUCESSFUL"
     - CANONICAL_PYTHON="3.8"
     - RELEASE_BRANCH="stable"
     - TWINE_USERNAME="dwhswenson"
@@ -47,9 +43,7 @@ script:
 after_success:
   - echo "success!"
 
-import: 
-  source: autorelease-travis.yml
-  mode: deep_merge
+import: autorelease-local.yml
 
 #jobs:
   #include:

@@ -1,0 +1,22 @@
+jobs:
+  include:
+    - stage: test testpypi
+      # This stage run when you make a PR to stable; after the package has
+      # been deployed to testpypi. It checks that the deployed package
+      # works.
+      if: "(branch = stable) and (type = pull_request)"
+      install:
+        - export PROJECT=`python setup.py --name`
+        - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
+      script: |
+          if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
+            eval $AUTORELEASE_TEST_TESTPYPI
+          else
+            cd ~
+            python -c "import $PROJECT"
+            #py.test --pyargs $PROJECT
+          fi
+      after_success:  # something weird from the hanging script?
+          - echo "done"
+
+
