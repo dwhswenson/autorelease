@@ -51,7 +51,7 @@ after_success:
 
 import: 
   source: autorelease-travis.yml
-  mode: replace
+  mode: deep_merge
 
 #jobs:
   #include:

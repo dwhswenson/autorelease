@@ -26,8 +26,8 @@ jobs:
         - echo INSTALLED CORRECTLY!
       script:
         - cd ~
-        - python -c "import " $PROJECT
-        - echo "py.test --pyargs " $PROJECT  # if I had py.test stuff
+        - python -c "import $PROJECT"
+        - echo "py.test --pyargs $PROJECT"  # if I had py.test stuff
     - stage: cut release
       # This stage runs after you merge a PR into stable. It cuts the GitHub
       # release based on the current stable branch and the release notes
