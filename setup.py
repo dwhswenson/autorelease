@@ -9,7 +9,7 @@ from setuptools import setup
 ####################### USER SETUP AREA #################################
 # * VERSION: base version (do not include .dev0, etc -- that's automatic)
 # * IS_RELEASE: whether this is a release
-VERSION = "0.0.11"
+VERSION = "0.0.12"
 IS_RELEASE = True
 
 DEV_NUM = 0  # always 0: we don't do public (pypi) .dev releases
@@ -176,7 +176,8 @@ if __name__ == "__main__":
         scripts=[],
         entry_points={
             'console_scripts': [
-                'autorelease-release = autorelease.scripts.release:main'
+                'autorelease-release = autorelease.scripts.release:main',
+                'write-release-notes = autorelease.scripts.write_release_notes:main'
             ]
         },
         description=SHORT_DESCRIPTION,

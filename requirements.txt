@@ -1,3 +1,4 @@
+python-dateutil
 packaging
 pyyaml
 gitpython

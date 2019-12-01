@@ -36,7 +36,7 @@ def main():
     logger = make_logger(opts.quiet)
 
     print(opts)
-    
+
     repo = git.Repo(opts.repo)
 
     upstream = [r for r in repo.remotes if r.name == 'upstream']

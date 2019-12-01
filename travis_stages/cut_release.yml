@@ -1,0 +1,13 @@
+jobs:
+  include:
+    - stage: cut release
+      # This stage runs after you merge a PR into stable. It cuts the GitHub
+      # release based on the current stable branch and the release notes
+      # from the last PR merged into stable.
+      if: "(branch = stable) and (not type in (pull_request, cron))"
+      install:
+        - pip install autorelease
+      script:
+        - VERSION=`python setup.py --version`
+        - PROJECT=`python setup.py --name`
+        - autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN

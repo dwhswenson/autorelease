@@ -1,0 +1,19 @@
+jobs:
+  include:
+    - stage: deploy pypi
+      # This stage runs when a version-labelled tag is made. It deploys the
+      # package to PyPI.
+      if: tag =~ ^v[0-9]+\.
+      addons:
+        apt_packages:
+          - pandoc
+      install: skip
+      script:
+          - pandoc --from=markdown --to=rst --output=README.rst README.md
+      deploy:
+        provider: pypi
+        distributions: sdist bdist_wheel
+        skip_cleanup: true  # need the readme.rst from the script stage
+        user: $TWINE_USERNAME
+        on:
+            tags: true
