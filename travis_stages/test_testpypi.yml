@@ -6,8 +6,9 @@ jobs:
       # works.
       if: "(branch = stable) and (type = pull_request)"
       install:
-        - export PROJECT=`python setup.py --name`
-        - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
+        - echo "INSTALL"
+        #- export PROJECT=`python setup.py --name`
+        #- pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
       script: 
         - echo "FOO"
       #|
@@ -18,5 +19,3 @@ jobs:
             #python -c "import $PROJECT"
             ##py.test --pyargs $PROJECT
           #fi
-      after_success:  # something weird from the hanging script?
-          - echo "done"
