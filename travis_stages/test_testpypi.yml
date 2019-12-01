@@ -16,5 +16,7 @@ jobs:
             python -c "import $PROJECT"
             #py.test --pyargs $PROJECT
           fi
+      after_success:  # something weird from the hanging script?
+          - echo "done"
 
 
