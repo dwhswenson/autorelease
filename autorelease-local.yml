@@ -1,10 +1,10 @@
 import:
-  - source: ./travis_stages/deploy_testpypi.yml
-    if: "(branch = stable) and (type = pull_request)"
-  #- source: ./travis_stages/test_testpypi.yml
+  #- source: ./travis_stages/deploy_testpypi.yml
     #if: "(branch = stable) and (type = pull_request)"
-  - source: travis_stages/cut_release.yml
-    if: "(branch = stable) and (not type in (pull_request, cron))"
+  - source: ./travis_stages/test_testpypi.yml
+    if: "(branch = stable) and (type = pull_request)"
+  #- source: travis_stages/cut_release.yml
+    #if: "(branch = stable) and (not type in (pull_request, cron))"
   #- source: travis_stages/deploy_pypi.yml
     #if: "tag =~ ^v[0-9]+\."
 
