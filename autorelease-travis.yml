@@ -1,20 +1,3 @@
-
-_default_test_testpypi: &default_test_testpypi
-  if: "(branch = stable) and (type = pull_request)"
-  install:
-    - export PROJECT=`python setup.py --name`
-    - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
-    - echo INSTALLED CORRECTLY!
-  script:
-    - cd ~
-    - python -c "import $PROJECT"
-    - echo "py.test --pyargs $PROJECT"
-
-# the user can override parts of the stage by overriding these anchors
-_test_testpypi: &test_testpypi
-  <<: *default_test_testpypi
-
-
 jobs:
   include:
     - stage: deploy testpypi

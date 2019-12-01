@@ -13,6 +13,8 @@ branches:
   - stable
   - /^v\d+(\.\d+)+$/
 
+import: autorelease-stages.yml
+
 _autorelease: 
   - &test_testpypi
     script:
