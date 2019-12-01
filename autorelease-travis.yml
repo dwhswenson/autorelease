@@ -13,12 +13,24 @@ jobs:
         - pandoc --from=markdown --to=rst --output=README.rst README.md
         - python setup.py sdist bdist_wheel
         #- twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
     - stage: test testpypi
-      <<: *default_test_testpypi
-      <<: *test_testpypi
       # This stage run when you make a PR to stable; after the package has
       # been deployed to testpypi. It checks that the deployed package
       # works.
+      if: "(branch = stable) and (type = pull_request)"
+      install:
+        - export PROJECT=`python setup.py --name`
+        - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
+      script: |
+          if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
+            eval $AUTORELEASE_TEST_TESTPYPI
+          else
+            cd ~
+            python -c "import $PROJECT"
+            #py.test --pyargs $PROJECT
+          fi
+
     - stage: cut release
       # This stage runs after you merge a PR into stable. It cuts the GitHub
       # release based on the current stable branch and the release notes
@@ -30,6 +42,7 @@ jobs:
         - VERSION=`python setup.py --version`
         - PROJECT=`python setup.py --name`
         - autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
+
     - stage: deploy pypi
       # This stage runs when a version-labelled tag is made. It deploys the
       # package to PyPI.

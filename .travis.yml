@@ -13,13 +13,6 @@ branches:
   - stable
   - /^v\d+(\.\d+)+$/
 
-import: autorelease-stages.yml
-
-_autorelease: 
-  - &test_testpypi
-    script:
-    - echo MERGED CORRECTLY!
-
 env:
   global:
     - CANONICAL_PYTHON="3.8"
