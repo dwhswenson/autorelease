@@ -49,7 +49,9 @@ script:
 after_success:
   - echo "success!"
 
-import: autorelease-travis.yml
+import: 
+  source: autorelease-travis.yml
+  mode: replace
 
 #jobs:
   #include:
