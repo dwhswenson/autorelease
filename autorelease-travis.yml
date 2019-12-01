@@ -1,3 +1,8 @@
+testpypi_script: &testpypi_script
+  - cd ~
+  - python -c "import $PROJECT"
+  - echo "py.test --pyargs $PROJECT"
+
 jobs:
   include:
     - stage: deploy testpypi
@@ -25,9 +30,7 @@ jobs:
         - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
         - echo INSTALLED CORRECTLY!
       script:
-        - cd ~
-        - python -c "import $PROJECT"
-        - echo "py.test --pyargs $PROJECT"  # if I had py.test stuff
+        <<: *testpypi
     - stage: cut release
       # This stage runs after you merge a PR into stable. It cuts the GitHub
       # release based on the current stable branch and the release notes
