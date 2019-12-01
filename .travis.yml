@@ -44,8 +44,7 @@ after_success:
   - echo "success!"
 
 import: 
-  source: autorelease-travis.yml
-  mode: deep_merge
+  source: autorelease-local.yml
 
 #jobs:
   #include:
