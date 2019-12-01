@@ -185,7 +185,7 @@ if __name__ == "__main__":
         long_description=DESCRIPTION,
         platforms=['Linux', 'Mac OS X', 'Unix', 'Windows'],
         install_requires=REQUIREMENTS,
-        requires=REQUIREMENTS,
+        # requires=REQUIREMENTS,
         tests_require=["pytest", "pytest-cov", "python-coveralls"],
         classifiers=CLASSIFIERS.split('\n')[1:-1]
     )
