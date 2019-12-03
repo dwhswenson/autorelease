@@ -178,7 +178,8 @@ if __name__ == "__main__":
         entry_points={
             'console_scripts': [
                 'autorelease-release = autorelease.scripts.release:main',
-                'write-release-notes = autorelease.scripts.write_release_notes:main'
+                'write-release-notes = autorelease.scripts.write_release_notes:main',
+                'autorelease-authcheck = autorelease.scripts.authenticate:main'
             ]
         },
         description=SHORT_DESCRIPTION,
