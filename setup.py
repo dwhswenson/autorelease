@@ -1,38 +1,22 @@
 import os
-import glob
 import ast
 import sys
 
 import subprocess
 import inspect
-
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser  # py2
+import fnmatch  # Py 2
 
 from setuptools import setup
 
-
-def is_release(version):
-    allowed_releases = os.getenv('AUTORELEASE_RELEASE_TYPES',
-                                 'pre a b rc post').split()
-    # this approach may be completely changed -- idea is to identify all
-    # alphabet-character substrings
-    start = 0
-    end = 0
-    all_alpha = []
-    len_vers = len(version)
-    while end <= len_vers:
-        #print(start, end, version[start:end], version[start:end].isalpha())
-        if not version[start:end + 1].isalpha() or end == len_vers:
-            if end - start > 1:
-                all_alpha.append(version[start:end])
-            start = end
-        end += 1
-
-    #print(all_alpha)
-    return all([val in AUTORELEASE_RELEASE_TYPES for val in all_alpha])
+def _glob_glob_recursive(directory, pattern):
+    # python 2 glob.glob doesn't have a recursive keyword
+    # this implements for the specific case that we want an exact match
+    # See also https://stackoverflow.com/a/2186565
+    matches = []
+    for root, dirname, filenames in os.walk(directory):
+        matches.extend([os.path.join(root, filename)
+                        for filename in fnmatch.filter(filenames, pattern)])
+    return matches
 
 
 class VersionPyFinder(object):
@@ -46,9 +30,10 @@ class VersionPyFinder(object):
         self.functions = self._get_functions(self.filename)
 
     def _find_files(self):
-        all_files = glob.glob("**/" + self.filename_base, recursive=True)
+        # all_files = glob.glob("**/" + self.filename_base, recursive=True)
+        all_files = _glob_glob_recursive('.', self.filename_base)
         meets_depth = [fname for fname in all_files
-                       if len(fname.split(os.sep)) < self.max_depth + 1]
+                       if len(fname.split(os.sep)) <= self.max_depth + 1]
         return meets_depth
 
     def _is_eligible(self, filename):

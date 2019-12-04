@@ -53,6 +53,26 @@ def get_git_version():
 
     return GIT_REVISION
 
+def _seek_parent_dirs_for_file(filename):
+    rel_directory = None
+    my_dir = os.path.dirname(os.path.abspath(__file__))
+    rel_directory_arr = []
+    while not rel_directory:
+        expected_dir = os.path.join(*rel_directory_arr) \
+                if rel_directory_arr else '.'
+        expected = os.path.join(expected_dir, filename)
+        if os.path.isfile(expected):
+            rel_directory = expected_dir
+        else:
+            rel_directory_arr.append('..')
+
+        if len(rel_directory_arr) > len(my_dir.split(os.sep)):
+            rel_directory_arr = []
+            break
+
+    return rel_directory
+
+
 def _find_rel_path_for_file(depth, filename):
     rel_directory = None
     if depth == 0:
@@ -60,20 +80,7 @@ def _find_rel_path_for_file(depth, filename):
     elif depth >= 1:
         rel_directory = os.sep.join(['..'] * depth)
     else:
-        my_dir = os.path.dirname(os.path.abspath(__file__))
-        rel_directory_arr = []
-        while not rel_directory:
-            expected_dir = os.path.join(*rel_directory_arr) \
-                    if rel_directory_arr else '.'
-            expected = os.path.join(expected_dir, filename)
-            if os.path.isfile(expected):
-                rel_directory = expected_dir
-            else:
-                rel_directory_arr.append('..')
-
-            if len(rel_directory_arr) > len(my_dir.split(os.sep)):
-                rel_directory_arr = []
-                break
+        rel_directory = _seek_parent_dirs_for_file(filename)
 
     if rel_directory:
         return os.path.join(rel_directory, filename)
