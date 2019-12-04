@@ -68,8 +68,30 @@ class VersionPyFinder(object):
         with open(self.filename, mode='r') as f:
             contents = f.read()
 
+        tree = ast.parse(contents)
+
+        class MakeImportError(ast.NodeTransformer):
+            """converts a from x import y into an import error"""
+            def __init__(self, import_name):
+                self.import_name = import_name
+
+            def visit_ImportFrom(self, node):
+                if node.module == self.import_name:
+                    replacement = ast.Raise(exc=ast.Call(
+                        ast.Name(id='ImportError', ctx=ast.Load()),
+                        args=[],
+                        keywords=[],
+                    ), cause=None)
+                    return ast.copy_location(replacement, node)
+                else:
+                    return node
+
+        import_remover = MakeImportError("_installed_version")
+        tree = import_remover.visit(tree)
+        ast.fix_missing_locations(tree)
+
         locs = dict(globals())
-        exec(contents, locs)
+        exec(compile(tree, filename="version.py", mode='exec'), locs)
         return {f: locs[f] for f in self._VERSION_PY_FUNCTIONS}
 
 
