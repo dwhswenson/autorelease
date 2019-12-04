@@ -116,7 +116,7 @@ def get_setup_version(default_version, directory, filename="setup.cfg"):
     version = default_version
     conf = get_setup_cfg(directory, filename)
     try:
-        version = conf['metadata']['version']
+        version = conf.get('metadata', 'version')
     except KeyError:
         pass  # version (or metadata) not defined in setup.cfg
     except TypeError:
