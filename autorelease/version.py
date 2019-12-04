@@ -3,9 +3,10 @@ import os
 import subprocess
 
 try:
-    from configparser import ConfigParser
+    from configparser import ConfigParser, NoSectionError, NoOptionError
 except ImportError:
-    from ConfigParser import ConfigParser  # py2
+    # py2
+    from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 
 try:
     from ._installed_version import _installed_version
@@ -117,10 +118,10 @@ def get_setup_version(default_version, directory, filename="setup.cfg"):
     conf = get_setup_cfg(directory, filename)
     try:
         version = conf.get('metadata', 'version')
-    except KeyError:
+    except (NoSectionError, NoOptionError):
         pass  # version (or metadata) not defined in setup.cfg
-    except TypeError:
-        pass  # no setup.cfg found
+    except AttributeError:
+        pass  # no setup.cfg found (conf is None)
     return version
 
 
