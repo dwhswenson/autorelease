@@ -78,7 +78,7 @@ class VersionPyFinder(object):
             def visit_ImportFrom(self, node):
                 if node.module == self.import_name:
                     replacement = ast.Raise(exc=ast.Call(
-                        ast.Name(id='ImportError', ctx=ast.Load()),
+                        func=ast.Name(id='ImportError', ctx=ast.Load()),
                         args=[],
                         keywords=[],
                     ), cause=None)
@@ -113,11 +113,11 @@ def write_installed_version_py(filename="_installed_version.py",
     my_dir = os.path.abspath(os.path.dirname(__file__))
     conf = get_setup_cfg(directory=my_dir, filename='setup.cfg')
     # conf = get_setup_cfg(directory=my_dir, filename='new_setup.cfg')
-    version = conf['metadata']['version']
+    version = conf.get('metadata', 'version')
     git_rev = get_git_version()
 
     if src_dir is None:
-        src_dir = conf['metadata']['name']
+        src_dir = conf.get('metadata', 'name')
 
     with open (os.path.join(src_dir, filename), 'w') as f:
         f.write(content.format(vers=version, git=git_rev, depth=depth))
