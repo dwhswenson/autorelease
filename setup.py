@@ -1,193 +1,123 @@
-"""
-setup.py for autorelease
-"""
 import os
+import glob
+import ast
+import sys
+
 import subprocess
 import inspect
+
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser  # py2
+
 from setuptools import setup
 
-####################### USER SETUP AREA #################################
-# * VERSION: base version (do not include .dev0, etc -- that's automatic)
-# * IS_RELEASE: whether this is a release
-VERSION = "0.0.15"
-IS_RELEASE = False
 
-DEV_NUM = 0  # always 0: we don't do public (pypi) .dev releases
-PRE_TYPE = ""  # a, b, or rc (although we rarely release such versions)
-PRE_NUM = 0
+def is_release(version):
+    allowed_releases = os.getenv('AUTORELEASE_RELEASE_TYPES',
+                                 'pre a b rc post').split()
+    # this approach may be completely changed -- idea is to identify all
+    # alphabet-character substrings
+    start = 0
+    end = 0
+    all_alpha = []
+    len_vers = len(version)
+    while end <= len_vers:
+        #print(start, end, version[start:end], version[start:end].isalpha())
+        if not version[start:end + 1].isalpha() or end == len_vers:
+            if end - start > 1:
+                all_alpha.append(version[start:end])
+            start = end
+        end += 1
 
-# REQUIREMENTS should list any required packages
-REQUIREMENTS=['packaging', 'pyyaml', 'gitpython', 'future', 'requests',
-              'python-dateutil']
-
-# PACKAGES should list any subpackages of the code. The assumption is that
-# package.subpackage is located at package/subpackage
-PACKAGES=['autorelease', 'autorelease.tests', 'autorelease.scripts']
-
-# This DESCRIPTION is only used if a README.rst hasn't been made from the
-# markdown version
-DESCRIPTION="""Tools to keep the release process clean, based on my own
-release procedures. For details, see the documentation.
-"""
-SHORT_DESCRIPTION="Tools to keep the release process clean"
-
-# note: leave the triple quotes on separate lines from the classifiers
-CLASSIFIERS="""
-Development Status :: 1 - Planning
-Environment :: Console
-Environment :: MacOS X
-Environment :: Win32 (MS Windows)
-Intended Audience :: Developers
-License :: OSI Approved :: MIT License
-Natural Language :: English
-Operating System :: MacOS :: MacOS X
-Operating System :: Microsoft :: Windows
-Operating System :: POSIX
-Programming Language :: Python :: 2.7
-Programming Language :: Python :: 3.4
-Programming Language :: Python :: 3.5
-Programming Language :: Python :: 3.6
-Topic :: Software Development :: Testing
-"""
-####################### USER SETUP AREA #################################
+    #print(all_alpha)
+    return all([val in AUTORELEASE_RELEASE_TYPES for val in all_alpha])
 
 
-# * VERSION: the release version number
-# * __version__: ?? how is this used ??
-# * PACKAGE_VERSION: the version used in setup.py info
-PACKAGE_VERSION = VERSION
-if PRE_TYPE != "":
-    PACKAGE_VERSION += "." + PRE_TYPE + str(PRE_NUM)
-if not IS_RELEASE:
-    PACKAGE_VERSION += ".dev" + str(DEV_NUM)
-__version__ = PACKAGE_VERSION
+class VersionPyFinder(object):
+    _VERSION_PY_FUNCTIONS = ['get_git_version', 'get_setup_cfg']
+    def __init__(self, filename='version.py', max_depth=2):
+        self.filename_base = filename
+        self.max_depth = max_depth
+        self.depth = None
+        self.filename = os.getenv("AUTORELEASE_VERSION_PY",
+                                  self._first_eligible())
+        self.functions = self._get_functions(self.filename)
 
-if os.path.isfile('README.rst'):
-    DESCRIPTION = open('README.rst').read()
+    def _find_files(self):
+        all_files = glob.glob("**/" + self.filename_base, recursive=True)
+        meets_depth = [fname for fname in all_files
+                       if len(fname.split(os.sep)) < self.max_depth + 1]
+        return meets_depth
 
-################################################################################
-# Writing version control information to the module
-################################################################################
-def get_git_version():
-    """
-    Return the git hash as a string.
+    def _is_eligible(self, filename):
+        with open(filename, mode='r') as f:
+            contents = f.read()
 
-    Apparently someone got this from numpy's setup.py. It has since been
-    modified a few times.
-    """
-    # Return the git revision as a string
-    # copied from numpy setup.py
-    def _minimal_ext_cmd(cmd):
-        # construct minimal environment
-        env = {}
-        for k in ['SYSTEMROOT', 'PATH']:
-            v = os.environ.get(k)
-            if v is not None:
-                env[k] = v
-        # LANGUAGE is used on win32
-        env['LANGUAGE'] = 'C'
-        env['LANG'] = 'C'
-        env['LC_ALL'] = 'C'
-        with open(os.devnull, 'w') as err_out:
-            out = subprocess.Popen(cmd,
-                                   stdout=subprocess.PIPE,
-                                   stderr=err_out, # maybe debug later?
-                                   env=env).communicate()[0]
-        return out
+        tree = ast.parse(contents)
+        # we requrie that our functions be defined at module level -- we
+        # know that's how we wrote them, at least!
+        all_functions = [node.name for node in tree.body
+                         if isinstance(node, ast.FunctionDef)]
+        return all(func in all_functions
+                   for func in self._VERSION_PY_FUNCTIONS)
 
-    try:
-        git_dir = os.path.dirname(os.path.realpath(__file__))
-        out = _minimal_ext_cmd(['git', '-C', git_dir, 'rev-parse', 'HEAD'])
-        GIT_REVISION = out.strip().decode('ascii')
-    except OSError:
-        GIT_REVISION = 'Unknown'
+    def _first_eligible(self):
+        all_files = self._find_files()
+        for fname in all_files:
+            if self._is_eligible(fname):
+                return fname
+        return None
 
-    return GIT_REVISION
+    @property
+    def version_setup_depth(self):
+        def get_depth(fname):
+            return len(os.path.abspath(fname).split(os.sep))
 
-# TODO: this may get moved into another file
-VERSION_PY_CONTENT = """
-# This file is automatically generated by setup.py
-\"\"\"
-Version info for autorelease.
+        # we assume thta setup.py is in the same dir as setup.cfg
+        diff = get_depth(self.filename) - get_depth(__file__)
+        return diff
 
-``full_version`` gives the most information about the current state. It is
-always the short (PEP440) version string, followed by a git hash as
-``+gGITHASH``. If the install is not in a live git repository, that hash is
-followed by ``.install``, and represents the commit that was installed. In a
-live repository, it represents the active state.
-\"\"\"
+    def _get_functions(self, filename):
+        with open(self.filename, mode='r') as f:
+            contents = f.read()
 
-import os
-import subprocess
-
-# this is automatically generated from the code in setup.py
-%(git_version_code)s
-
-short_version = '%(version)s'
-version = '%(version)s'
-installed_git_hash = '%(git_revision)s'
-full_version = version + '+g' + installed_git_hash[:7] + '.install'
-release = %(is_release)s
-git_hash = 'Unknown'  # default
-
-if not release:
-    git_hash = get_git_version()
-    if git_hash != '' and git_hash != 'Unknown':
-        full_version = version + '+g' + git_hash[:7]
-
-    version = full_version
-"""
-
-def write_version_py(filename):
-    # Adding the git rev number needs to be done inside write_version_py(),
-    # otherwise the import of numpy.version messes up the build under Python 3.
-    git_version_code = inspect.getsource(get_git_version)
-    if os.path.exists('.git'):
-        GIT_REVISION = get_git_version()
-    else:
-        GIT_REVISION = 'Unknown'
-
-    content = VERSION_PY_CONTENT % {
-        'version': PACKAGE_VERSION,
-        'git_revision': GIT_REVISION,
-        'is_release': str(IS_RELEASE),
-        'git_version_code': str(git_version_code)
-    }
-
-    with open(filename, 'w') as version_file:
-        version_file.write(content)
+        locs = dict(globals())
+        exec(contents, locs)
+        return {f: locs[f] for f in self._VERSION_PY_FUNCTIONS}
 
 
-################################################################################
-# Installation
-################################################################################
+def write_installed_version_py(filename="_installed_version.py",
+                               src_dir=None):
+    version_finder = VersionPyFinder()
+    directory = os.path.dirname(version_finder.filename)
+    depth = version_finder.version_setup_depth
+    get_git_version = version_finder.functions['get_git_version']
+    get_setup_cfg = version_finder.functions['get_setup_cfg']
+
+    installed_version = os.path.join(directory, "_installed_version.py")
+    content = "_installed_version = '{vers}'\n"
+    content += "_installed_git_hash = '{git}'\n"
+    content += "_version_setup_depth = {depth}\n"
+
+    # question: if I use the __file__ attribute in something I compile from
+    # here, what is the file?
+    my_dir = os.path.abspath(os.path.dirname(__file__))
+    conf = get_setup_cfg(directory=my_dir, filename='setup.cfg')
+    # conf = get_setup_cfg(directory=my_dir, filename='new_setup.cfg')
+    version = conf['metadata']['version']
+    git_rev = get_git_version()
+
+    if src_dir is None:
+        src_dir = conf['metadata']['name']
+
+    with open (os.path.join(src_dir, filename), 'w') as f:
+        f.write(content.format(vers=version, git=git_rev, depth=depth))
+
 if __name__ == "__main__":
-    write_version_py(os.path.join('autorelease', 'version.py'))
-    setup(
-        name="autorelease",
-        author="David W.H. Swenson",
-        author_email="dwhs@hyperblazer.net",
-        version=PACKAGE_VERSION,
-        license="LGPL-2.1+",
-        url="http://github.com/dwhswenson/autorelease",
-        packages=PACKAGES,
-        package_dir={p: '/'.join(p.split('.')) for p in PACKAGES},
-        package_data={},
-        ext_modules=[],
-        scripts=[],
-        entry_points={
-            'console_scripts': [
-                'autorelease-release = autorelease.scripts.release:main',
-                'write-release-notes = autorelease.scripts.write_release_notes:main'
-            ]
-        },
-        description=SHORT_DESCRIPTION,
-        long_description=DESCRIPTION,
-        platforms=['Linux', 'Mac OS X', 'Unix', 'Windows'],
-        install_requires=REQUIREMENTS,
-        # requires=REQUIREMENTS,
-        tests_require=["pytest", "pytest-cov", "python-coveralls"],
-        classifiers=CLASSIFIERS.split('\n')[1:-1]
-    )
-
+    # TODO: only write version.py under special circumstances
+    write_installed_version_py()
+    # write_version_py(os.path.join('autorelease', 'version.py'))
+    setup()
 
