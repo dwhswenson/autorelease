@@ -62,7 +62,7 @@ def _seek_parent_dirs_for_file(filename):
         expected_dir = os.path.join(*rel_directory_arr) \
                 if rel_directory_arr else '.'
         expected = os.path.join(expected_dir, filename)
-        if os.path.isfile(expected):
+        if os.path.isfile(os.path.normpath(expected)):
             rel_directory = expected_dir
         else:
             rel_directory_arr.append('..')
