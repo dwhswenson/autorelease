@@ -10,7 +10,7 @@ from autorelease.version import _find_rel_path_for_file
     (0, '.'), (1, '..'), (2, '..' + os.sep + '..'),
 ])
 def test_find_rel_path_for_file(depth, result):
-    expected = result + os.sep + 'setup.cfg'
+    expected = os.path.normpath(result + os.sep + 'setup.cfg')
     assert _find_rel_path_for_file(depth, 'setup.cfg') == expected
 
 @pytest.mark.parametrize("expected", ['./setup.cfg', '../setup.cfg',
