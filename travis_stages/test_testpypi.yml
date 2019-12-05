@@ -7,6 +7,7 @@ jobs:
       if: "(branch = stable) and (type = pull_request)"
       install:
         - export PROJECT=`python setup.py --name`
+        # TODO: add the script to wait for the correct version
         - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
       script: |
           if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
