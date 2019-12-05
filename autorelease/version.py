@@ -84,7 +84,7 @@ def _find_rel_path_for_file(depth, filename):
         rel_directory = _seek_parent_dirs_for_file(filename)
 
     if rel_directory:
-        return os.path.join(rel_directory, filename)
+        return os.path.normpath(os.path.join(rel_directory, filename))
     else:
         return None
 
