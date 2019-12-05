@@ -6,6 +6,9 @@ jobs:
       # works.
       if: "(branch = stable) and (type = pull_request)"
       install:
+        #- pip install autorelease
+        - rehash
+        #- wait-for-testpypi setup.py
         - export PROJECT=`python setup.py --name`
         - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
       script: |
