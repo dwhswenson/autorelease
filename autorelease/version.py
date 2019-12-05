@@ -15,7 +15,7 @@ try:
 except ImportError:
     _installed_version = "Unknown"
     _installed_git_hash = "Unknown"
-    _version_setup_depth = 0
+    _version_setup_depth = -1
 
 
 def get_git_version():
@@ -62,7 +62,7 @@ def _seek_parent_dirs_for_file(filename):
         expected_dir = os.path.join(*rel_directory_arr) \
                 if rel_directory_arr else '.'
         expected = os.path.join(expected_dir, filename)
-        if os.path.isfile(expected):
+        if os.path.isfile(os.path.normpath(expected)):
             rel_directory = expected_dir
         else:
             rel_directory_arr.append('..')
@@ -84,7 +84,7 @@ def _find_rel_path_for_file(depth, filename):
         rel_directory = _seek_parent_dirs_for_file(filename)
 
     if rel_directory:
-        return os.path.join(rel_directory, filename)
+        return os.path.normpath(os.path.join(rel_directory, filename))
     else:
         return None
 
@@ -100,8 +100,9 @@ def get_setup_cfg(directory, filename="setup.cfg"):
         filename for setup.cfg; default 'setup.cfg'
     """
     if isinstance(directory, int):
-        setup_cfg = os.path.normpath(_find_rel_path_for_file(directory,
-                                                             filename))
+        rel_path = _find_rel_path_for_file(directory, filename)
+        start_dir = os.path.abspath(os.path.dirname(__file__))
+        setup_cfg = os.path.normpath(os.path.join(start_dir, rel_path))
     else:
         setup_cfg = os.path.join(directory, filename)
 
@@ -125,7 +126,8 @@ def get_setup_version(default_version, directory, filename="setup.cfg"):
     return version
 
 
-short_version = get_setup_version(_installed_version, directory='..')
+short_version = get_setup_version(_installed_version,
+                                  directory=_version_setup_depth)
 _git_version = get_git_version()
 _is_repo = (_git_version != '' and _git_version != "Unknown")
 
