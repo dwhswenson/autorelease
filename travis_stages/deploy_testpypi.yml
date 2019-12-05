@@ -5,8 +5,10 @@ jobs:
       # deployment to testpypi works.
       if: "(branch = stable) and (type = pull_request)"
       install:
-        - pip install twine
+        - pip install twine #autorelease
+        - rehash
       script: 
-        # TODO: add the rewrite-cfg to dev script
+        #- bump-dev-version  # comes from autorelease
+        - python setup.py --version
         - python setup.py sdist bdist_wheel
         - twine upload --repository-url https://test.pypi.org/legacy/ dist/*

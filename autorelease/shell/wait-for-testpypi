@@ -1,11 +1,13 @@
 #!/bin/bash
 
+# Usage: takes setup.py as input (NOT setup.cfg!)
+
 SETUP_PY=$1
 
 VERSION=`python $SETUP_PY --version`
 PROJECT=`python $SETUP_PY --name`
 
-echo "Searching test.pypi for  $VERSION"
+echo "Searching test.pypi for $VERSION"
 
 MISSING_VERSION=true
 while $MISSING_VERSION; do
