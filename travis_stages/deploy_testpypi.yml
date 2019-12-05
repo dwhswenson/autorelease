@@ -6,9 +6,10 @@ jobs:
       if: "(branch = stable) and (type = pull_request)"
       install:
         - pip install twine #autorelease
-        - rehash
+        - hash -r
       script: 
         #- bump-dev-version  # comes from autorelease
         - python setup.py --version
         - python setup.py sdist bdist_wheel
+        - twine check dist/*
         - twine upload --repository-url https://test.pypi.org/legacy/ dist/*
