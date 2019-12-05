@@ -1,7 +1,7 @@
 package:
   name: autorelease
   # add ".dev0" for unreleased versions
-  version: "0.0.17"
+  version: "0.0.18.dev0"
 
 source:
   path: ../../
@@ -42,5 +42,5 @@ test:
 
 about:
   home: https://github.com/dwhswenson/autorelease
-  license: LGPL-2.1 or later
+  license: MIT
   summary: "Check the version and branches in release cycle"
