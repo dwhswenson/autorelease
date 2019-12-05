@@ -6,11 +6,11 @@ jobs:
       # works.
       if: "(branch = stable) and (type = pull_request)"
       install:
-        #- pip install autorelease
+        - pip install autorelease
         - hash -r
-        #- wait-for-testpypi setup.py
+        - wait-for-testpypi setup.py
         - export PROJECT=`python setup.py --name`
-        - pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
+        - pip install --pre --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
       script: |
           if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
             eval $AUTORELEASE_TEST_TESTPYPI
