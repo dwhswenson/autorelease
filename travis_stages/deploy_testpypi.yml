@@ -6,7 +6,7 @@ jobs:
       if: "(branch = stable) and (type = pull_request)"
       install:
         - pip install twine #autorelease
-        - rehash
+        - hash -r
       script: 
         #- bump-dev-version  # comes from autorelease
         - python setup.py --version
