@@ -1,9 +1,8 @@
+# This file is vendored from Autorelease
 import os
 import ast
 import sys
 
-import subprocess
-import inspect
 import fnmatch  # Py 2
 
 from setuptools import setup
