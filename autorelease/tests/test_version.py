@@ -18,6 +18,7 @@ def test_find_rel_path_for_file(depth, result):
 def test_find_rel_path_for_file_finds_file(expected):
     with mock.patch('autorelease.version.os.path.isfile',
                     lambda x: x == expected):
+        expected = os.path.normpath(expected)  # fix slashes on windows
         assert _find_rel_path_for_file(-1, 'setup.cfg') == expected
 
 def test_find_rel_path_for_file_finds_no_file():
