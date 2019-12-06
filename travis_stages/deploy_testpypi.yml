@@ -5,10 +5,10 @@ jobs:
       # deployment to testpypi works.
       if: "(branch = stable) and (type = pull_request)"
       install:
-        - pip install twine #autorelease
+        - pip install twine autorelease
         - hash -r
       script: 
-        #- bump-dev-version  # comes from autorelease
+        - bump-dev-version  # comes from autorelease
         - python setup.py --version
         - python setup.py sdist bdist_wheel
         - twine check dist/*
