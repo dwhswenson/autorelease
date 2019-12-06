@@ -7,7 +7,8 @@ jobs:
       install:
         - pip install twine
         #- pip install autorelease
-        # this is for debugging autorelease itself
+        # this is for debugging anything in autorelease used here (change
+        # the branch tag to whatever is needed)
         - pip install git+https://github.com/dwhswenson/autorelease.git@release-0.0.18#egg=autorelease
         - hash -r
       script: 
