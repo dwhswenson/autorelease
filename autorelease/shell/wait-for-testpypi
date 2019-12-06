@@ -14,7 +14,7 @@ while $MISSING_VERSION; do
     pip_results=`pip search -i https://test.pypi.org/pypi $PROJECT`
     pip search -i https://test.pypi.org/pypi $PROJECT
     #echo $pip_results
-    grepped=`echo $pip_results | grep $PROJECT`
+    grepped=`echo $pip_results | grep "$PROJECT " | grep $VESRION`
     #echo "Grepped:" $grepped
     if [ -n "$grepped" ]; then
         MISSING_VERSION=false

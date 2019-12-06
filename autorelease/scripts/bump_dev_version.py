@@ -11,8 +11,8 @@ import requests
 def get_latest_pypi(package, index="https://test.pypi.org/pypi"):
     url = "/".join([index, package, 'json'])
     req = requests.get(url)
-    version = req.json()['info']['version']
-    return version
+    version = max([Version(v) for v in req.json()['releases'].keys()])
+    return str(version)
 
 def _strip_dev(version_str):
     version = Version(version_str)  # to normalize
@@ -48,6 +48,8 @@ def make_parser():
                         help="setup.cfg file to use")
     parser.add_argument("-o", "--output", type=str,
                         help="output file; defaults to same as input")
+    parser.add_argument('--dry', action='store_true')
+    parser.add_argument('--get-max', action='store_true')
     return parser
 
 def main():
@@ -59,11 +61,22 @@ def main():
     v_setup = conf.get('metadata', 'version')
     package = conf.get('metadata', 'name')
     v_pypi = get_latest_pypi(package, opts.index)
+    if opts.get_max:
+        print(v_pypi)
+        return
+
     version_to_bump = select_version(v_pypi, v_setup)
     new_version = bump_dev_version(version_to_bump)
-    conf.set('metadata', 'version', new_version)
-    with open(output, 'w') as f:
-        conf.write(f)
+
+    if not opts.get_max:
+        print("Local version: ", v_setup)
+        print("Remote version: ", v_pypi)
+        print("Bumped version: ", new_version)
+
+    if not opts.dry:
+        conf.set('metadata', 'version', new_version)
+        with open(output, 'w') as f:
+            conf.write(f)
 
 if __name__ == "__main__":
     main()
