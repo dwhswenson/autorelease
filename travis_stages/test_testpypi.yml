@@ -13,7 +13,7 @@ jobs:
         - hash -r
         - wait-for-testpypi
         - export PROJECT=`python setup.py --name`
-        - export VERSION=`pypi-max-version`
+        - export VERSION=`pypi-max-version $PROJECT`
         - echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
         - pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
       script: |
