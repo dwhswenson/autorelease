@@ -7,10 +7,15 @@ jobs:
       if: "(branch = stable) and (type = pull_request)"
       install:
         - pip install autorelease
+        # this is for debugging anything in autorelease used here (change
+        # the branch tag to whatever is needed)
+        #- pip install git+https://github.com/dwhswenson/autorelease.git@release-0.0.18#egg=autorelease
         - hash -r
-        - wait-for-testpypi setup.py
+        - wait-for-testpypi
         - export PROJECT=`python setup.py --name`
-        - pip install --pre --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple $PROJECT
+        - export VERSION=`pypi-max-version $PROJECT`
+        - echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
+        - pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
       script: |
           if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
             eval $AUTORELEASE_TEST_TESTPYPI

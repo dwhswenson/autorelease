@@ -5,7 +5,11 @@ jobs:
       # deployment to testpypi works.
       if: "(branch = stable) and (type = pull_request)"
       install:
-        - pip install twine autorelease
+        - pip install twine
+        - pip install autorelease
+        # this is for debugging anything in autorelease used here (change
+        # the branch tag to whatever is needed)
+        #- pip install git+https://github.com/dwhswenson/autorelease.git@release-0.0.18#egg=autorelease
         - hash -r
       script: 
         - bump-dev-version  # comes from autorelease
