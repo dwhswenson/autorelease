@@ -45,7 +45,16 @@ class GitReleaseChecks(object):
         # this takes the version (before the '_') and drops the preceding v
         tag_versions = [t.name.split('_')[0][1:] for t in self.repo.tags]
         # TODO: may be better to replace with regex for reusability
-        return [vers.Version(v) for v in tag_versions]
+        versions = []
+        for version in tag_versions:
+            try:
+                v = vers.Version(version)
+            except vers.InvalidVersion:
+                pass
+            else:
+                versions.append(v)
+        return versions
+        # return [vers.Version(v) for v in tag_versions]
 
     def reasonable_desired_version(self, desired_version, allow_equal=False,
                                   allow_patch_skip=False):
@@ -69,8 +78,9 @@ class GitReleaseChecks(object):
             # no tags yet, and legal version is legal!
             return ""
         max_version = max(self._versions_from_tags()).base_version
-        (old_major, old_minor, old_patch) = \
-                map(int, str(max_version).split('.'))
+        parts = list(map(int, str(max_version).split('.')))
+        parts += [0] * (3 - len(parts))
+        old_major, old_minor, old_patch = parts
 
         update_str = str(max_version) + " -> " + str(desired_version)
 
