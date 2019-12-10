@@ -115,6 +115,8 @@ def write_installed_version_py(filename="_installed_version.py",
     version = conf.get('metadata', 'version')
     git_rev = get_git_version()
 
+    # TODO: shouldn't vwe just use the directory found by the
+    # VersionPyFinder?
     if src_dir is None:
         src_dir = conf.get('metadata', 'name')
 
