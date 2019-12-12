@@ -1,4 +1,6 @@
-# AUTORELEASE v0.1.1.dev0
+# AUTORELEASE v0.1.1
+# for nonrelease, use @master
+# for release, use v${VERSION}, e.g., v1.0.0
 import:
     - dwhswenson/autorelease:travis_stages/deploy_testpypi.yml@master
     - dwhswenson/autorelease:travis_stages/cut_release.yml@master
