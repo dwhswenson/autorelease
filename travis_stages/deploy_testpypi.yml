@@ -13,8 +13,8 @@ jobs:
         #- pip install git+https://github.com/dwhswenson/autorelease.git@release-0.0.18#egg=autorelease
         - hash -r
       before_script:
-        - if [ -z "$TWINE_USERNAME" ]; then echo "Missing TWINE_USERNAME"; fi
-        - if [ -z "$TWINE_PASSWORD" ]; then echo "Missing TWINE_PASSWORD"; fi
+        - if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
+        - if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
       script: 
         - bump-dev-version  # comes from autorelease
         - python setup.py --version

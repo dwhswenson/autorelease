@@ -5,9 +5,14 @@ jobs:
       # release based on the current stable branch and the release notes
       # from the last PR merged into stable.
       if: "(branch = stable) and (not type in (pull_request, cron))"
+      before_install: skip
       install:
         - pip install autorelease
+      before_script: skip
       script:
         - VERSION=`python setup.py --version`
         - PROJECT=`python setup.py --name`
         - autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
+      after_success: skip
+      after_failure: skip
+      after_script: skip
