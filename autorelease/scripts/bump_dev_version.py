@@ -1,10 +1,14 @@
 import argparse
 import time
+
 try:
     from configparser import ConfigParser, NoSectionError, NoOptionError
 except ImportError:
     # py2
     from ConfigParser import ConfigParser, NoSectionError, NoOptionError
+
+
+from json import JSONDecodeError
 
 from packaging.version import Version
 import requests
@@ -12,10 +16,10 @@ import requests
 def get_latest_pypi(package, index="https://test.pypi.org/pypi"):
     url = "/".join([index, package, 'json'])
     req = requests.get(url)
-    if req.ok:
+    try:
         version = max([Version(v) for v in req.json()['releases'].keys()])
-    else:
-        # probably 404'd because it isn't there
+    except JSONDecodeError:
+        # couldn't find a version, so we're okay
         version = "0.0.0.dev0"
     return str(version)
 
