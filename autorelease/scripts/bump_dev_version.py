@@ -12,7 +12,11 @@ import requests
 def get_latest_pypi(package, index="https://test.pypi.org/pypi"):
     url = "/".join([index, package, 'json'])
     req = requests.get(url)
-    version = max([Version(v) for v in req.json()['releases'].keys()])
+    if req.ok:
+        version = max([Version(v) for v in req.json()['releases'].keys()])
+    else:
+        # probably 404'd because it isn't there
+        version = "0.0.0.dev0"
     return str(version)
 
 def _strip_dev(version_str):

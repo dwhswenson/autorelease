@@ -4,6 +4,7 @@ jobs:
       # This stage runs when you make a PR to stable. It tests that the
       # deployment to testpypi works.
       if: "(branch = stable) and (type = pull_request)"
+      before_install: skip
       install:
         - pip install twine
         - pip install autorelease
@@ -11,9 +12,16 @@ jobs:
         # the branch tag to whatever is needed)
         #- pip install git+https://github.com/dwhswenson/autorelease.git@release-0.0.18#egg=autorelease
         - hash -r
+      before_script:
+        - if [ -z "$TWINE_USERNAME" ]; then echo "Missing TWINE_USERNAME"; fi
+        - if [ -z "$TWINE_PASSWORD" ]; then echo "Missing TWINE_PASSWORD"; fi
       script: 
         - bump-dev-version  # comes from autorelease
         - python setup.py --version
         - python setup.py sdist bdist_wheel
         - twine check dist/*
         - twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+      after_success: skip
+      after_failure: skip
+      # deploy stuff won't be run on PR; don't need to override
+      after_script: skip
