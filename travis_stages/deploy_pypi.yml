@@ -4,8 +4,13 @@ jobs:
       # This stage runs when a version-labelled tag is made. It deploys the
       # package to PyPI.
       if: tag =~ ^v[0-9]+\.
+      before_install: skip
       install: skip
+      before_script: skip
+      before_cache: skip
       script: skip
+      after_success: 'true'
+      # before_deploy is allowed
       deploy:
         provider: pypi
         distributions: sdist bdist_wheel
@@ -14,3 +19,4 @@ jobs:
         on:
             tags: true
         password: $TWINE_PASSWORD
+      after_script: skip
