@@ -2,7 +2,7 @@
 # for nonrelease, use @master
 # for release, use v${VERSION}, e.g., v1.0.0
 import:
-    - dwhswenson/autorelease:travis_stages/deploy_testpypi.yml@master
-    - dwhswenson/autorelease:travis_stages/cut_release.yml@master
-    - dwhswenson/autorelease:travis_stages/deploy_pypi.yml@master
-    - dwhswenson/autorelease:travis_stages/test_testpypi.yml@master
+    - dwhswenson/autorelease:travis_stages/deploy_testpypi.yml@ops_fixes
+    - dwhswenson/autorelease:travis_stages/cut_release.yml@ops_fixes
+    - dwhswenson/autorelease:travis_stages/deploy_pypi.yml@ops_fixes
+    - dwhswenson/autorelease:travis_stages/test_testpypi.yml@ops_fixes

@@ -5,8 +5,10 @@ jobs:
       # been deployed to testpypi. It checks that the deployed package
       # works.
       if: "(branch = stable) and (type = pull_request)"
+      before_install: skip
       install:
-        - pip install autorelease
+        #- pip install autorelease
+        - pip install git+https://github.com/dwhswenson/autorelease@ops_fixes
         # this is for debugging anything in autorelease used here (change
         # the branch tag to whatever is needed)
         #- pip install git+https://github.com/dwhswenson/autorelease.git@release-0.0.18#egg=autorelease
@@ -16,6 +18,7 @@ jobs:
         - export VERSION=`pypi-max-version $PROJECT`
         - echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
         - pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
+      before_script: skip
       script: |
           if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
             eval $AUTORELEASE_TEST_TESTPYPI
@@ -24,3 +27,6 @@ jobs:
             python -c "import $PROJECT"
             py.test --pyargs $PROJECT
           fi
+      after_failure: skip
+      after_success: skip
+      after_script: skip
