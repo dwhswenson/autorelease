@@ -23,10 +23,12 @@ jobs:
           if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
             eval $AUTORELEASE_TEST_TESTPYPI
           else
+            cd ~
+            echo "PACKAGE_IMPORT_NAME: $PACKAGE_IMPORT_NAME"
+            echo "PROJECT: $PROJECT"
             if [ -z "$PACKAGE_IMPORT_NAME" ]; then
               PACKAGE_IMPORT_NAME=$PROJECT
             fi
-            cd ~
             python -c "import $PACKAGE_IMPORT_NAME"
             py.test --pyargs $PACKAGE_IMPORT_NAME
           fi
