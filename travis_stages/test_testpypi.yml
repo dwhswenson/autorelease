@@ -26,9 +26,9 @@ jobs:
             cd ~
             echo "PACKAGE_IMPORT_NAME: $PACKAGE_IMPORT_NAME"
             echo "PROJECT: $PROJECT"
-            if [ -z "$PACKAGE_IMPORT_NAME" ]; then
-              PACKAGE_IMPORT_NAME=$PROJECT
-            fi
+            #if [ -z "$PACKAGE_IMPORT_NAME" ]; then
+              #PACKAGE_IMPORT_NAME=$PROJECT
+            #fi
             python -c "import $PACKAGE_IMPORT_NAME"
             py.test --pyargs $PACKAGE_IMPORT_NAME
           fi
