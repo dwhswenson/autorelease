@@ -15,7 +15,7 @@ jobs:
         provider: pypi
         distributions: sdist bdist_wheel
         #skip_cleanup: true  # need the readme.rst from the script stage
-        user: $TWINE_USERNAME
+        username: $TWINE_USERNAME
         on:
             tags: true
         password: $TWINE_PASSWORD
