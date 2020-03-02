@@ -117,10 +117,12 @@ class ReleaseNoteWriter(GitHubRepoBase):
         title = pull['title']
         number = str(pull['number'])
         author = pull['user']['login']
-        out_str = "* " + title + " (#" + number + ")"
+        out_str = "* " + title + " (#" + number
         if author not in self.config['standard_contributors']:
             out_str += " @" + author
+        out_str += ")"
         for label in extra_labels:
+            label = label.replace(' ', '_')
             out_str += " #" + label
         out_str += "\n"
         return out_str
