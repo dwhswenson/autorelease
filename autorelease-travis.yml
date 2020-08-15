@@ -1,12 +1,12 @@
-# AUTORELEASE v0.2.1.dev0
+# AUTORELEASE v0.2.2.dev0
 # for nonrelease, use @master
 # for release, use v${VERSION}, e.g., v1.0.0
 stages:
     - test
-    - deploy_testpypi
-    - test_testpypi
-    - cut_release
-    - deploy_pypi
+    - deploy testpypi
+    - test testpypi
+    - cut release
+    - deploy pypi
 
 import:
     - dwhswenson/autorelease:travis_stages/deploy_testpypi.yml@master
