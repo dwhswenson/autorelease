@@ -1,0 +1,19 @@
+stages:
+  stage: cut_release
+    displayName: Cut Release
+    condition: |
+      and(eq(variables[Build.SourceBranch], variables.stable),
+          ne(variables[Build.Reason], 'PullRequest'),
+          ne(variables[Build.Reason], 'Scheduled'),
+          succeeded())
+    steps:
+      step:
+        bash: python -m pip install autorelease
+        displayName: "Install autorelease"
+      step:
+        bash: |
+          VERSION=`python setup.py --version`
+          PROJECT=`python setup.py --name`
+          echo $PROJECT $VERSION
+          echo "This is where we cut the release"
+          #autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
