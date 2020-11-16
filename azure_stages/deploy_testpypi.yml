@@ -9,25 +9,25 @@ stages:
     steps:
       - step:
         bash: |
-        python -m pip install twine
-        python -m pip install autorelease
-        hash -r
+          python -m pip install twine
+          python -m pip install autorelease
+          hash -r
         displayName: "Install tools"
       - step:
         bash: |
-        bump-dev-version  # comes from autorelease
-        python setup.py --version
-        python setup.py sdist bdist_wheel
+          bump-dev-version  # comes from autorelease
+          python setup.py --version
+          python setup.py sdist bdist_wheel
         displayName: "Build package"
       - step:
         bash: twine check dist/*
         displayName: "Check package"
       - step:
         bash: |
-        if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
-        if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
-        echo "Here's where we would upload to testpypi"
-        #twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+          if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
+          if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
+          echo "Here's where we would upload to testpypi"
+          #twine upload --repository-url https://test.pypi.org/legacy/ dist/*
         displayName: "Upload to testpypi"
 
   - stage: test_testpypi
