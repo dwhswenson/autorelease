@@ -18,6 +18,7 @@ stages:
         bash: |
           if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
           if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
-          twine upload dist/*
+          echo "This is where we would upload to PyPI"
+          #twine upload dist/*
         displayName: "Upload to PyPI"
 
