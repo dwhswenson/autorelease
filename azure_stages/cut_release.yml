@@ -15,11 +15,9 @@ stages:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.8'
-          - step:
-            bash: python -m pip install autorelease
+          - bash: python -m pip install autorelease
             displayName: "Install autorelease"
-          - step:
-            bash: |
+          - bash: |
               VERSION=`python setup.py --version`
               PROJECT=`python setup.py --name`
               echo $PROJECT $VERSION
