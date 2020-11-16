@@ -1,5 +1,5 @@
 stages:
-  stage: cut_release
+  - stage: cut_release
     displayName: Cut Release
     condition: |
       and(eq(variables[Build.SourceBranch], variables.stable),
@@ -7,10 +7,10 @@ stages:
           ne(variables[Build.Reason], 'Scheduled'),
           succeeded())
     steps:
-      step:
+      - step:
         bash: python -m pip install autorelease
         displayName: "Install autorelease"
-      step:
+      - step:
         bash: |
           VERSION=`python setup.py --version`
           PROJECT=`python setup.py --name`
