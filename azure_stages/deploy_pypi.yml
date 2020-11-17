@@ -1,7 +1,7 @@
 stages:
   - stage: deploy_pypi
     displayName: Deploy PyPI
-    condition: startWith(variables['Build.SourceBranch'], 'refs/tags/v')
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
     jobs:
       - job: deploy_pypi
         displayName: Deploy PyPI
