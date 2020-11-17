@@ -3,7 +3,7 @@ stages:
     displayName: Deploy testpypi
     condition: |
       and(eq(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['Build.TargetBranch'], 'stable'), 
+          eq(variables['System.PullRequest.TargetBranch'], 'stable'), 
           ne(variables['Build.Reason'], 'Scheduled'),
           succeeded())
     jobs:
