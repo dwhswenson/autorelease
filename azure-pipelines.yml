@@ -86,6 +86,18 @@ stages:
         #- bash: |
             #bash <(curl -s https://codecov.io/bash)
           #displayName: 'After success'
+  #- stage: conditions
+    #displayName: Conditions
+    #jobs:
+      #- job: pr
+        #displayName: PR
+        #conditions: eq(variables['Build.Reason'], 'PullRequest')
+        #pool:
+          #vmImage: 'ubuntu-latest'
+        #steps:
+          #- bash: 
+
+
   - template: azure_stages/deploy_testpypi.yml
   - template: azure_stages/cut_release.yml
   - template: azure_stages/deploy_pypi.yml
