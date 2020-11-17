@@ -68,6 +68,7 @@ stages:
               export BRANCH=$(System.PullRequest.TargetBranch)
               export EVENT="pull_request"
             else
+              export EVENT="push"  # override later if cron
               export BRANCH=$(Build.SourceBranchName)
             fi
             if [ $(Build.Reason) = "Schedule" ]; then
