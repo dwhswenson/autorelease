@@ -1,10 +1,11 @@
 stages:
   - stage: cut_release
     displayName: Cut Release
+    # TODO: make 'stable' into variable/parameter
     condition: |
-      and(eq(variables[Build.SourceBranch], variables.stable),
-          ne(variables[Build.Reason], 'PullRequest'),
-          ne(variables[Build.Reason], 'Scheduled'),
+      and(eq(variables['Build.SourceBranch'], 'stable'),
+          ne(variables['Build.Reason'], 'PullRequest'),
+          ne(variables['Build.Reason'], 'Scheduled'),
           succeeded())
     jobs:
       - job: cut_release
