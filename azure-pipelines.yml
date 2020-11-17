@@ -63,9 +63,18 @@ stages:
         - bash: |
             source activate autorelease-py$(python.version)
             autorelease-release -h
-            python release_check.py \
-                --branch $(System.PullRequest.TargetBranch) \
-                --event pull_request
+            echo "build reason: $(Build.Reason)"
+            if [ $(Build.Reason) = "PullRequest" ]; then
+              export BRANCH=$(System.PullRequest.TargetBranch)
+              export EVENT="pull_request"
+            else
+              export BRANCH=$(Build.SourceBranchName)
+            fi
+            if [ $(Build.Reason) = "Schedule" ]; then
+              export EVENT="cron"
+            fi
+            echo "BRANCH $BRANCH ; EVENT $EVENT"
+            python release_check.py --branch $BRANCH --event $EVENT
           displayName: 'Autorelease check'
 
         #- bash: |
