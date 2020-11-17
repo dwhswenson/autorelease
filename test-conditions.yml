@@ -17,7 +17,7 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - bash: echo $(Build.Reason)
-      - job: target-stable
+      - job: target_stable
         displayName: target == stable
         condition: eq(variables['Build.TargetBranch'], 'stable')
         pool:
