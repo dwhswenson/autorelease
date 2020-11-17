@@ -3,7 +3,7 @@ stages:
     displayName: Conditions
     jobs:
       - job: print
-      - displayName: Print vars
+        displayName: Print vars
         pool:
           vmImage: 'ubuntu-latest'
         steps:
