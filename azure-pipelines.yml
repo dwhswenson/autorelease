@@ -1,0 +1,81 @@
+trigger:
+  branches:
+    include:
+      - master
+      - stable
+  tags:
+    include:
+      - v*.*.*
+
+pr:
+  branches:
+    include:
+      - master
+      - stable
+
+stages:
+  - stage: testing
+    displayName: Tests
+    jobs:
+      - job: testing
+        displayName: Tests
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          matrix:
+            Python38:
+              python.version: '3.8'
+            Python37:
+              python.version: '3.7'
+            Python36:
+              python.version: '3.6'
+            Python27:
+              python.version: '2.7'
+
+        steps:
+        - bash: |
+            echo "##vso[task.prependpath]$CONDA/bin"
+            export CONDA_PY=$(python.version)
+            conda create --yes -n autorelease-py${CONDA_PY} python=${CONDA_PY} pip
+          displayName: 'Create conda env'
+
+        - bash: |
+            source activate autorelease-py$(python.version)
+            python --version
+            python -m pip install -e .
+            conda env list
+          displayName: 'Install'
+
+        - bash: |
+            source activate autorelease-py$(python.version)
+            python -m pip install -r ./devtools/pip-install/full_testing.txt
+            python -m pip install pytest-azurepipelines
+          displayName: 'Install testing tools'
+
+        - bash: |
+            source activate autorelease-py$(python.version)
+            conda env list
+            which python
+            python --version
+            conda list
+          displayName: 'Versions'
+
+        - bash: |
+            source activate autorelease-py$(python.version)
+            autorelease-release -h
+            python release_check.py \
+                --branch $(System.PullRequest.TargetBranch) \
+                --event pull_request
+          displayName: 'Autorelease check'
+
+        #- bash: |
+            #source activate autorelease-py$(python.version)
+            #py.test -vv --cov=autorelease --cov-report xml:cov.xml
+          #displayName: 'Unit tests'
+
+        #- bash: |
+            #bash <(curl -s https://codecov.io/bash)
+          #displayName: 'After success'
+  - template: azure_stages/deploy_testpypi.yml
+  - template: azure_stages/cut_release.yml
+  - template: azure_stages/deploy_pypi.yml
