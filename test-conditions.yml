@@ -1,0 +1,36 @@
+stage:
+  - stage: conditions
+    displayName: Conditions
+    jobs:
+      - job: print
+      - diplayName: Print vars
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          bash: |
+            echo $(Build.Reason)
+            echo $(Build.TargetBranch)
+      - job: pr
+        displayName: PR
+        conditions: eq(variables['Build.Reason'], 'PullRequest')
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - bash: echo $(Build.Reason)
+      - job: target-stable
+        displayName: target == stable
+        conditions: eq(variables['Build.TargetBranch'], 'stable')
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - bash: echo $(Build.TargetBranch)
+      - job: not_cron
+        displayName: not cron
+        conditions: ne(variables['Build.Reason'], 'Scheduled')
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - bash: echo $(Build.Reason)
+
+
+
