@@ -12,6 +12,9 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.8'
           - bash: |
               python -m pip install twine
               python -m pip install autorelease
@@ -40,6 +43,9 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.8'
           - bash: |
               pip install autorelease
               hash -r
