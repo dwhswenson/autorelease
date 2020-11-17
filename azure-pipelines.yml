@@ -13,6 +13,10 @@ pr:
       - master
       - stable
 
+variables:
+  - group: twine-group
+  - group: autorelease-group
+
 stages:
   - stage: testing
     displayName: Tests
