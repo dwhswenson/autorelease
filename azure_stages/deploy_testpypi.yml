@@ -12,23 +12,19 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - step:
-            bash: |
+          - bash: |
               python -m pip install twine
               python -m pip install autorelease
               hash -r
             displayName: "Install tools"
-          - step:
-            bash: |
+          - bash: |
               bump-dev-version  # comes from autorelease
               python setup.py --version
               python setup.py sdist bdist_wheel
             displayName: "Build package"
-          - step:
-            bash: twine check dist/*
+          - bash: twine check dist/*
             displayName: "Check package"
-          - step:
-            bash: |
+          - bash: |
               if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
               if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
               echo "Here's where we would upload to testpypi"
@@ -44,27 +40,23 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - step:
-            bash: |
+          - bash: |
               pip install autorelease
               hash -r
               wait-for-testpypi
-          - step:
-            bash: |
+          - bash: |
               export PROJECT=`python setup.py --name`
               export VERSION=`pypi-max-version $PROJECT`
               echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
               pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
-          - step:
-            bash: |
+          - bash: |
               if [ -z "$PACKAGE_IMPORT_NAME" ]; then
                 export PACKAGE_IMPORT_NAME=$PROJECT
               fi
               echo "PROJECT: $PROJECT"
               echo "PACKAGE_IMPORT_NAME: $PACKAGE_IMPORT_NAME"
               echo "AUTORELEASE_TEST_TESTPYPI: $AUTORELEASE_TEST_TESTPYPI"
-          - step:
-            bash: |
+          - bash: |
               if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
                 eval $AUTORELEASE_TEST_TESTPYPI
               else
