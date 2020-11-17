@@ -2,63 +2,73 @@ stages:
   - stage: deploy_testpypi
     displayName: Deploy testpypi
     condition: |
-      and(eq(variables[Build.SourceBranchName], variables.stable), 
-          ne(variables[Build.Reason], 'PullRequest'),
-          ne(variables[Build.Reason], 'Scheduled'),
+      and(eq(variables['Build.SourceBranchName'], 'stable'), 
+          eq(variables['Build.Reason'], 'PullRequest'),
+          ne(variables['Build.Reason'], 'Scheduled'),
           succeeded())
-    steps:
-      - step:
-        bash: |
-          python -m pip install twine
-          python -m pip install autorelease
-          hash -r
-        displayName: "Install tools"
-      - step:
-        bash: |
-          bump-dev-version  # comes from autorelease
-          python setup.py --version
-          python setup.py sdist bdist_wheel
-        displayName: "Build package"
-      - step:
-        bash: twine check dist/*
-        displayName: "Check package"
-      - step:
-        bash: |
-          if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
-          if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
-          echo "Here's where we would upload to testpypi"
-          #twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-        displayName: "Upload to testpypi"
+    jobs:
+      - job: deploy_testpypi
+        displayName: Deploy testpypi
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - step:
+            bash: |
+              python -m pip install twine
+              python -m pip install autorelease
+              hash -r
+            displayName: "Install tools"
+          - step:
+            bash: |
+              bump-dev-version  # comes from autorelease
+              python setup.py --version
+              python setup.py sdist bdist_wheel
+            displayName: "Build package"
+          - step:
+            bash: twine check dist/*
+            displayName: "Check package"
+          - step:
+            bash: |
+              if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
+              if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
+              echo "Here's where we would upload to testpypi"
+              #twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+            displayName: "Upload to testpypi"
 
   - stage: test_testpypi
     displayName: Test testpypi
     dependsOn: deploy_testpypi
-    steps:
-      - step:
-        bash: |
-          pip install autorelease
-          hash -r
-          wait-for-testpypi
-      - step:
-        bash: |
-          export PROJECT=`python setup.py --name`
-          export VERSION=`pypi-max-version $PROJECT`
-          echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
-          pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
-      - step:
-        bash: |
-          if [ -z "$PACKAGE_IMPORT_NAME" ]; then
-            export PACKAGE_IMPORT_NAME=$PROJECT
-          fi
-          echo "PROJECT: $PROJECT"
-          echo "PACKAGE_IMPORT_NAME: $PACKAGE_IMPORT_NAME"
-          echo "AUTORELEASE_TEST_TESTPYPI: $AUTORELEASE_TEST_TESTPYPI"
-      - step:
-        bash: |
-          if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
-            eval $AUTORELEASE_TEST_TESTPYPI
-          else
-            cd ~
-            python -c "import $PACKAGE_IMPORT_NAME"
-            py.test --pyargs $PACKAGE_IMPORT_NAME
-          fi
+    jobs:
+      - job: test_testpypi
+        displayName: Test testpypi
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - step:
+            bash: |
+              pip install autorelease
+              hash -r
+              wait-for-testpypi
+          - step:
+            bash: |
+              export PROJECT=`python setup.py --name`
+              export VERSION=`pypi-max-version $PROJECT`
+              echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
+              pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
+          - step:
+            bash: |
+              if [ -z "$PACKAGE_IMPORT_NAME" ]; then
+                export PACKAGE_IMPORT_NAME=$PROJECT
+              fi
+              echo "PROJECT: $PROJECT"
+              echo "PACKAGE_IMPORT_NAME: $PACKAGE_IMPORT_NAME"
+              echo "AUTORELEASE_TEST_TESTPYPI: $AUTORELEASE_TEST_TESTPYPI"
+          - step:
+            bash: |
+              if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
+                eval $AUTORELEASE_TEST_TESTPYPI
+              else
+                cd ~
+                python -c "import $PACKAGE_IMPORT_NAME"
+                py.test --pyargs $PACKAGE_IMPORT_NAME
+              fi

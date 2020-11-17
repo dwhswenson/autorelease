@@ -76,6 +76,6 @@ stages:
         #- bash: |
             #bash <(curl -s https://codecov.io/bash)
           #displayName: 'After success'
-  #- template: azure_stages/deploy_testpypi.yml
+  - template: azure_stages/deploy_testpypi.yml
   - template: azure_stages/cut_release.yml
-  #- template: azure_stages/deploy_pypi.yml
+  - template: azure_stages/deploy_pypi.yml
