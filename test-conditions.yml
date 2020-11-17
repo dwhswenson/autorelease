@@ -1,4 +1,4 @@
-stage:
+stages:
   - stage: conditions
     displayName: Conditions
     jobs:
