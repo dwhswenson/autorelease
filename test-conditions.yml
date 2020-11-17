@@ -7,9 +7,9 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          bash: |
-            echo $(Build.Reason)
-            echo $(Build.TargetBranch)
+          - bash: |
+              echo $(Build.Reason)
+              echo $(Build.TargetBranch)
       - job: pr
         displayName: PR
         condition: eq(variables['Build.Reason'], 'PullRequest')
