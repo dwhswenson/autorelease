@@ -22,8 +22,8 @@ stages:
               VERSION=`python setup.py --version`
               PROJECT=`python setup.py --name`
               echo $PROJECT $VERSION
-              echo "This is where we cut the release"
-              #autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
+              #echo "This is where we cut the release"
+              autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
             env:
               AUTORELEASE_TOKEN: $(AUTORELEASE_TOKEN)
             displayName: Cut release
