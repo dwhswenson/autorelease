@@ -1,11 +1,7 @@
 stages:
   - stage: deploy_testpypi
+    # TODO: deploying to pypi, test or real, should be a separate template
     displayName: Deploy testpypi
-    condition: |
-      and(eq(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['System.PullRequest.TargetBranch'], 'stable'), 
-          ne(variables['Build.Reason'], 'Scheduled'),
-          succeeded())
     jobs:
       - job: deploy_testpypi
         displayName: Deploy testpypi
@@ -32,8 +28,8 @@ stages:
           - bash: |
               if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
               if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
-              #echo "Here's where we would upload to testpypi"
-              twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+              echo "Here's where we would upload to testpypi"
+              #twine upload --repository-url https://test.pypi.org/legacy/ dist/*
             env:
               TWINE_PASSWORD: $(TWINE_PASSWORD)
             displayName: "Upload to testpypi"
@@ -57,7 +53,7 @@ stages:
               export PROJECT=`python setup.py --name`
               export VERSION=`pypi-max-version $PROJECT`
               echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
-              pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
+              #pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
             displayName: "Install from testpypi"
           - bash: |
               export PROJECT=`python setup.py --name`

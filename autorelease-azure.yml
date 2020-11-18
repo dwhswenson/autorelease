@@ -1,0 +1,20 @@
+parameters:
+  - name: default_stable_branch
+    default: stable
+  - name: target_is_stable
+    type: boolean
+    default: false
+  - name: branch_is_stable
+    type: boolean
+    default: false
+  - name: branch_is_vtag
+    type: boolean
+    default: false
+
+stages:
+- ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), or(parameters.target_is_stable, eq(variables['System.PullRequest.TargetBranch'], parameters.default_stable_branch))) }}:
+  - template: azure_stages/deploy_testpypi.yml
+- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['Build.Reason'], 'Schedule'), or(parameters.branch_is_stable, eq(variables['Build.SourceBranchName'], parameters.default_stable_branch))) }}:
+  - template: azure_stages/cut_release.yml
+- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['Build.Reason'], 'Schedule'), or(parameters.branch_is_vtag, startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))) }}:
+  - template: azure_stages/deploy_pypi.yml
