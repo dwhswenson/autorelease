@@ -1,3 +1,17 @@
+parameters:
+  - name: default_stable_branch
+    default: stable
+  - name: target_is_stable
+    type: boolean
+    default: false
+  - name: branch_is_stable
+    type: boolean
+    default: false
+  - name: branch_is_vtag
+    type: boolean
+    default: false
+
+
 stages:
   - stage: conditions
     displayName: Conditions
@@ -8,8 +22,10 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - bash: |
+              echo $(default_stable_branch)
               echo $(Build.Reason)
               echo $(Build.TargetBranch)
+              echo $(Build.SourceBranchName)
       - job: pr
         displayName: PR
         condition: eq(variables['Build.Reason'], 'PullRequest')
@@ -31,6 +47,28 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - bash: echo $(Build.Reason)
+      - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), or(parameters.target_is_stable, eq(variables['System.PullRequest.TargetBranch'], parameters.default_stable_branch))) }}:
+        job: pr_to_stable
+        displayName: PR to stable
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - bash: echo $(System.PullRequest.TargetBranch)
+      - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['Build.Reason'], 'Schedule'), or(parameters.branch_is_stable, eq(variables['Build.SourceBranchName'], parameters.default_stable_branch))) }}:
+        - job: release_cutter
+          displayName: Release cutter
+          pool:
+            vmImage: 'ubuntu-latest'
+          steps:
+            - bash: echo $(Build.SourceBranchName)
+      - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['Build.Reason'], 'Schedule'), or(parameters.branch_is_vtag, startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))) }}:
+        - job: final_deploy
+          displayName: Final deploy
+          pool:
+            vmImage: 'ubuntu-latest'
+          steps:
+            - bash: echo $(Build.SourceBranch)
+
 
 
 
