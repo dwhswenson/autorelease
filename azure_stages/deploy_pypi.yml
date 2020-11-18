@@ -25,5 +25,7 @@ stages:
               if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
               echo "This is where we would upload to PyPI"
               #twine upload dist/*
+            env:
+              TWINE_PASSWORD: $(TWINE_PASSWORD)
             displayName: "Upload to PyPI"
 

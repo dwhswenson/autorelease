@@ -33,6 +33,8 @@ stages:
               if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
               echo "Here's where we would upload to testpypi"
               #twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+            env:
+              TWINE_PASSWORD: $(TWINE_PASSWORD)
             displayName: "Upload to testpypi"
 
   - stage: test_testpypi
