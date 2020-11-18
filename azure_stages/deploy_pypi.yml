@@ -1,0 +1,31 @@
+stages:
+  - stage: deploy_pypi
+    displayName: Deploy PyPI
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+    jobs:
+      - job: deploy_pypi
+        displayName: Deploy PyPI
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.8'
+          - bash: |
+              python -m pip install twine
+              python -m pip install autorelease
+              hash -r
+            displayName: "Install tools"
+          - bash: |
+              python setup.py sdist bdist_wheel
+              twine check dist/*
+            displayName: "Build and check package"
+          - bash: |
+              if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
+              if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
+              #echo "This is where we would upload to PyPI"
+              twine upload dist/*
+            env:
+              TWINE_PASSWORD: $(TWINE_PASSWORD)
+            displayName: "Upload to PyPI"
+

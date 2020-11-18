@@ -4,7 +4,23 @@
 
 # Autorelease
 
-Tools for keeping release behavior clean. Includes:
+Release management for GitHub and continuous integration, based on branches.
+The basic philosophy is to maintain development branches (which always have
+development versions of the code) and release branches (which always have
+release versions of the code). The workflow for a release is therefore:
+
+1. Update the version for release and make a PR to a stable branch; the top
+   post will be the release notes.
+2. Merge the PR.
+
+That's it.
+
+When you make the PR to a stable branch, the CI will deploy the package to
+testpypi, and re-download it and test it again. This ensures that you don't
+publish broken packages. After you merge to the stable branch, the CI will cut
+a new release on GitHub, and then release on PyPI.
+
+Tools included:
 
 * Travis config imports and scripts to automatically test-deploy on testpypi,
   then cut a GitHub release, then deploy to PyPI.
