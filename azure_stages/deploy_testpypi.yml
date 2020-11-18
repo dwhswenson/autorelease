@@ -1,75 +1,76 @@
-stages:
-  - stage: deploy_testpypi
-    # TODO: deploying to pypi, test or real, should be a separate template
+#stages:
+  #- stage: deploy_testpypi
+    ## TODO: deploying to pypi, test or real, should be a separate template
+    #displayName: Deploy testpypi
+jobs:
+  - job: deploy_testpypi
     displayName: Deploy testpypi
-    jobs:
-      - job: deploy_testpypi
-        displayName: Deploy testpypi
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: '3.8'
-          - bash: |
-              python -m pip install twine wheel
-              python -m pip install autorelease
-              hash -r
-            displayName: "Install tools"
-          - bash: pip list
-            displayName: "Versions"
-          - bash: |
-              bump-dev-version  # comes from autorelease
-              python setup.py --version
-              python setup.py sdist bdist_wheel
-            displayName: "Build package"
-          - bash: twine check dist/*
-            displayName: "Check package"
-          - bash: |
-              if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
-              if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
-              echo "Here's where we would upload to testpypi"
-              #twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-            env:
-              TWINE_PASSWORD: $(TWINE_PASSWORD)
-            displayName: "Upload to testpypi"
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.8'
+      - bash: |
+          python -m pip install twine wheel
+          python -m pip install autorelease
+          hash -r
+        displayName: "Install tools"
+      - bash: pip list
+        displayName: "Versions"
+      - bash: |
+          bump-dev-version  # comes from autorelease
+          python setup.py --version
+          python setup.py sdist bdist_wheel
+        displayName: "Build package"
+      - bash: twine check dist/*
+        displayName: "Check package"
+      - bash: |
+          if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
+          if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
+          echo "Here's where we would upload to testpypi"
+          #twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+        env:
+          TWINE_PASSWORD: $(TWINE_PASSWORD)
+        displayName: "Upload to testpypi"
 
-  - stage: test_testpypi
-    displayName: Test testpypi
-    dependsOn: deploy_testpypi
-    jobs:
-      - job: test_testpypi
-        displayName: Test testpypi
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: '3.8'
-          - bash: |
-              pip install autorelease
-              hash -r
-              wait-for-testpypi
-              export PROJECT=`python setup.py --name`
-              export VERSION=`pypi-max-version $PROJECT`
-              echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
-              #pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
-            displayName: "Install from testpypi"
-          - bash: |
-              export PROJECT=`python setup.py --name`
-              export VERSION=`pypi-max-version $PROJECT`
-              if [ -z "$PACKAGE_IMPORT_NAME" ]; then
-                export PACKAGE_IMPORT_NAME=$PROJECT
-              fi
-              echo "PROJECT: $PROJECT"
-              echo "PACKAGE_IMPORT_NAME: $PACKAGE_IMPORT_NAME"
-              echo "AUTORELEASE_TEST_TESTPYPI: $AUTORELEASE_TEST_TESTPYPI"
-              if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
-                eval $AUTORELEASE_TEST_TESTPYPI
-              else
-                python -m pip install pytest-azurepipelines
-                cd ~
-                python -c "import $PACKAGE_IMPORT_NAME"
-                py.test --pyargs $PACKAGE_IMPORT_NAME
-              fi
-            displayName: "Run tests"
+  #- stage: test_testpypi
+    #displayName: Test testpypi
+    #dependsOn: deploy_testpypi
+    #jobs:
+- job: test_testpypi
+  displayName: Test testpypi
+  dependsOn: deploy_testpypi
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
+    - bash: |
+        pip install autorelease
+        hash -r
+        wait-for-testpypi
+        export PROJECT=`python setup.py --name`
+        export VERSION=`pypi-max-version $PROJECT`
+        echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
+        #pip install --pre --force-reinstall --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
+      displayName: "Install from testpypi"
+    - bash: |
+        export PROJECT=`python setup.py --name`
+        export VERSION=`pypi-max-version $PROJECT`
+        if [ -z "$PACKAGE_IMPORT_NAME" ]; then
+          export PACKAGE_IMPORT_NAME=$PROJECT
+        fi
+        echo "PROJECT: $PROJECT"
+        echo "PACKAGE_IMPORT_NAME: $PACKAGE_IMPORT_NAME"
+        echo "AUTORELEASE_TEST_TESTPYPI: $AUTORELEASE_TEST_TESTPYPI"
+        if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
+          eval $AUTORELEASE_TEST_TESTPYPI
+        else
+          python -m pip install pytest-azurepipelines
+          cd ~
+          python -c "import $PACKAGE_IMPORT_NAME"
+          py.test --pyargs $PACKAGE_IMPORT_NAME
+      fi
+    displayName: "Run tests"
