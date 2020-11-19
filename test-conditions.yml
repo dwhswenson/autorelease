@@ -22,10 +22,11 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - bash: |
-              echo ${{ parameters.default_stable_branch }}
-              echo ${{ variables['Build.Reason'] }}
-              echo ${{ variables['Build.TargetBranch'] }}
-              echo ${{ variables['Build.SourceBranchName'] }}
+              echo "default stable " ${{ parameters.default_stable_branch }}
+              echo "reason " ${{ variables['Build.Reason'] }}
+              echo "PR target " ${{ variables['System.PullRequest..TargetBranch'] }}
+              echo "source branch name " ${{ variables['Build.SourceBranchName'] }}
+              echo "PR target == stable" ${{ eq(variables['System.PullRequest.TargetBranch'], parameters.default_stable_branch) }}
               echo "PR to stable: " ${{ and(eq(variables['Build.Reason'], 'PullRequest'), or(parameters.target_is_stable, eq(variables['System.PullRequest.TargetBranch'], parameters.default_stable_branch))) }}
       #- job: pr
         #displayName: PR
@@ -49,23 +50,23 @@ stages:
         #steps:
           #- bash: echo $(Build.Reason)
       - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), or(parameters.target_is_stable, eq(variables['System.PullRequest.TargetBranch'], parameters.default_stable_branch))) }}:
-        job: pr_to_stable
-        displayName: PR to stable
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - bash: echo $(System.PullRequest.TargetBranch)
+        - job: pr_to_stable
+          displayName: PR to stable
+          pool:
+            vmImage: 'ubuntu-latest'
+          steps:
+            - bash: echo $(System.PullRequest.TargetBranch)
       - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['Build.Reason'], 'Schedule'), or(parameters.branch_is_stable, eq(variables['Build.SourceBranchName'], parameters.default_stable_branch))) }}:
-        job: release_cutter
-        displayName: Release cutter
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - bash: echo $(Build.SourceBranchName)
+        - job: release_cutter
+          displayName: Release cutter
+          pool:
+            vmImage: 'ubuntu-latest'
+          steps:
+            - bash: echo $(Build.SourceBranchName)
       - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['Build.Reason'], 'Schedule'), or(parameters.branch_is_vtag, startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))) }}:
-        job: final_deploy
-        displayName: Final deploy
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - bash: echo $(Build.SourceBranch)
+        - job: final_deploy
+          displayName: Final deploy
+          pool:
+            vmImage: 'ubuntu-latest'
+          steps:
+            - bash: echo $(Build.SourceBranch)
