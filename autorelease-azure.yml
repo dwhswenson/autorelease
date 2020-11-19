@@ -20,7 +20,7 @@ stages:
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - task: UsePythonVersion
+          - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.8'
       - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), or(parameters.target_is_stable, eq(variables['System.PullRequest.TargetBranch'], parameters.default_stable_branch))) }}:
