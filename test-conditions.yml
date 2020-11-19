@@ -22,10 +22,11 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - bash: |
-              echo $(default_stable_branch)
-              echo $(Build.Reason)
-              echo $(Build.TargetBranch)
-              echo $(Build.SourceBranchName)
+              echo ${{ parameters.default_stable_branch }}
+              echo ${{ variables['Build.Reason'] }}
+              echo ${{ variables['Build.TargetBranch'] }}
+              echo ${{ variables['Build.SourceBranchName'] }}
+              echo "PR to stable: " ${{ and(eq(variables['Build.Reason'], 'PullRequest'), or(parameters.target_is_stable, eq(variables['System.PullRequest.TargetBranch'], parameters.default_stable_branch))) }}
       #- job: pr
         #displayName: PR
         #condition: eq(variables['Build.Reason'], 'PullRequest')

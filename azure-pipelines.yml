@@ -92,4 +92,4 @@ stages:
           #displayName: 'After success'
 
   - template: test-conditions.yml  # debugging
-  - template: autorelease-azure.yml
+  #- template: autorelease-azure.yml
