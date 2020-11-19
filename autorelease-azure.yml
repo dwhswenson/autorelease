@@ -12,12 +12,10 @@ parameters:
     default: false
 
 stages:
-  stage: autorelease
-  displayName: Autorelease
-  - stage: dummy
-    displayName: Nothing to do
+  - stage: autorelease
+    displayName: Autorelease
     jobs:
-      job:
+      job: dummy
       displayName: Do nothing
       pool:
         vmImage: 'ubuntu-latest'
