@@ -50,7 +50,7 @@ jobs:
       - bash: |
           pip install autorelease
           hash -r
-          wait-for-testpypi
+          #wait-for-testpypi
           export PROJECT=`python setup.py --name`
           export VERSION=`pypi-max-version $PROJECT`
           echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
@@ -72,5 +72,5 @@ jobs:
             cd ~
             python -c "import $PACKAGE_IMPORT_NAME"
             py.test --pyargs $PACKAGE_IMPORT_NAME
-        fi
-      displayName: "Run tests"
+          fi
+        displayName: "Run tests"
