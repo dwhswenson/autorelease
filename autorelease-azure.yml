@@ -15,10 +15,10 @@ stages:
   - stage: autorelease
     displayName: Autorelease
     jobs:
-      job: dummy
-      displayName: Do nothing
-      pool:
-        vmImage: 'ubuntu-latest'
+      - job: dummy
+        displayName: Do nothing
+        pool:
+          vmImage: 'ubuntu-latest'
         steps:
           - task: UsePythonVersion
             inputs:
