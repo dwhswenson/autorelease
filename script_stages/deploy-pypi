@@ -15,6 +15,6 @@ if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
 echo "Here's where we would upload to testpypi"
 
 echo twine upload $EXTRA_TWINE_ARGS dist/*
-#if [ -z "$DRY" ]; then
-    #twine upload $EXTRA_TWINE_ARGS dist/* || exit 1
-#fi
+if [ -z "$DRY" ]; then
+    twine upload $EXTRA_TWINE_ARGS dist/* || exit 1
+fi
