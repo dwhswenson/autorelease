@@ -8,7 +8,7 @@ bump-dev-version
 python setup.py --version
 python setup.py sdist bdist_wheel
 
-bash twine check dist/* || exit 1
+twine check dist/* || exit 1
 
 if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
 if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
