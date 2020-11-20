@@ -23,6 +23,7 @@ echo "AUTORELEASE_TEST_TESTPYPI: $AUTORELEASE_TEST_TESTPYPI"
 if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
     eval $AUTORELEASE_TEST_TESTPYPI || exit 1
 else
+    python -m pip install pytest
     cd ~
     python -c "import $PACKAGE_IMPORT_NAME"
     py.test --pyargs $PACKAGE_IMPORT_NAME  || exit 1
