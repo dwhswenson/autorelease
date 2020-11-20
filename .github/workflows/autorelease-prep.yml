@@ -13,7 +13,7 @@ defaults:
 
 jobs:
   deploy_testpypi:
-    name: Autorelease: Deployment test
+    name: "Autorelease: Deployment test"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2

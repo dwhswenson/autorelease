@@ -4,7 +4,7 @@ on:
 
 jobs:
   deploy_pypi:
-    name: Autorelease: Deploy to PyPI
+    name: "Autorelease: Deploy to PyPI"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
