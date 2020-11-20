@@ -40,15 +40,14 @@ jobs:
         run: pip list
       - name: "Tests"
         env:
-          PR_BRANCH: ${{ github.event.pull_request.base_ref }}
+          PR_BRANCH: ${{ github.event.pull_request.base.ref }}
           PUSH_REF: ${{ github.event.push.ref }}
           EVENT: ${{ github.event_name }}
-          EVENT_INFO: ${{ toJson(github.event) }}
+          #EVENT_INFO: ${{ toJson(github.event) }}  # useful debug
+          BRANCH: "${{github.event.pull_request.base.ref}}${{github.event.push.ref}}"
         run: |
-          echo "PR_BRANCH: $PR_BRANCH"
-          echo "PUSH_REF: $PUSH_REF"
           echo "EVENT: $EVENT"
-          echo "$EVENT_INFO"
+          echo "BRANCH: $BRANCH"
           python -c "import autorelease"
           autorelease-release -h
           #python release_check.py --branch $BRANCH --event $EVENT \
