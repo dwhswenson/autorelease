@@ -5,6 +5,7 @@ on:
 
 jobs:
   release-gh:
+    runs-on: ubuntu-latest
     name: "Autorelease: Cut release"
     steps:
       - uses: actions/checkout@v2

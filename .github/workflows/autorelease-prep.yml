@@ -7,12 +7,12 @@ env:
   DRY: true
 
 defaults:
-  runs-on: ubuntu-latest
   run:
     shell: bash
 
 jobs:
   deploy_testpypi:
+    runs-on: ubuntu-latest
     name: "Autorelease: Deployment test"
     steps:
       - uses: actions/checkout@v2
@@ -24,6 +24,7 @@ jobs:
           hash -r
       - run: deploy-pypi --repository-url https://test.pypi.org/legacy/
   test_testpypi:
+    runs-on: ubuntu-latest
     name: "Autorelease: Test deployed"
     needs: deploy_testpypi
     steps:
