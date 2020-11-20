@@ -1,0 +1,49 @@
+on:
+  pull_request:
+    branches:
+      - master
+      - stable
+  schedule:
+    cron: "25 5 * * *"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test_suite:
+    runs-on: ubuntu-latest
+    name: "Tests"
+    strategy:
+      matrix:
+        CONDA_PY:
+          - 3.9
+          - 3.8
+          - 3.7
+          - 2.7
+           
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.CONDA_PY }}
+      - name: "Installation"
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install -r devtools/pip-install/full_testing.txt
+          python -m pip install -e .
+      - name: "Versions"
+        run: pip list
+      - name: "Tests"
+        env:
+          PR_BRANCH: ${{ github.event.pull_request.base_ref }}
+          PUSH_REF: ${{ github.event.push.ref }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          echo "PR_BRANCH: $PR_BRANCH"
+          echo "PUSH_REF: $PUSH_REF"
+          echo "EVENT: $EVENT"
+          python -c "import autorelease"
+          autorelease-release -h
+          #python release_check.py --branch $BRANCH --event $EVENT \
+              #--allow-patch-skip
