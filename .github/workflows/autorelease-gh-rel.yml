@@ -1,0 +1,22 @@
+on:
+  push:
+    branches:
+      - stable
+
+jobs:
+  release-gh:
+    name: Autorelease: Cut release
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+      - run: |
+          python -m pip install -e .
+          hash -r
+      - run: |
+          VERSION=`python setup.py --version`
+          PROJECT=`python setup.py --name`
+          echo $PROJECT $VERSION
+          echo "This is where we cut the release"
+          #autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
