@@ -4,6 +4,9 @@ on:
     branches:
       - master
       - stable
+  push:
+    branches:
+      - master
   schedule:
     - cron: "25 5 * * *"
 
@@ -40,10 +43,12 @@ jobs:
           PR_BRANCH: ${{ github.event.pull_request.base_ref }}
           PUSH_REF: ${{ github.event.push.ref }}
           EVENT: ${{ github.event_name }}
+          EVENT_INFO: ${{ toJson(github.event) }}
         run: |
           echo "PR_BRANCH: $PR_BRANCH"
           echo "PUSH_REF: $PUSH_REF"
           echo "EVENT: $EVENT"
+          echo "$EVENT_INFO"
           python -c "import autorelease"
           autorelease-release -h
           #python release_check.py --branch $BRANCH --event $EVENT \
