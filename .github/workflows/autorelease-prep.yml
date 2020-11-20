@@ -24,7 +24,7 @@ jobs:
           hash -r
       - run: deploy-pypi --repository-url https://test.pypi.org/legacy/
   test_testpypi:
-    name: Autorelease: Test deployed
+    name: "Autorelease: Test deployed"
     needs: deploy_testpypi
     steps:
       - uses: actions/checkout@v2
