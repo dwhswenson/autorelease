@@ -1,3 +1,4 @@
+name: Autorelease
 on:
   push:
     branches:
@@ -6,7 +7,7 @@ on:
 jobs:
   release-gh:
     runs-on: ubuntu-latest
-    name: "Autorelease: Cut release"
+    name: "Cut release"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
