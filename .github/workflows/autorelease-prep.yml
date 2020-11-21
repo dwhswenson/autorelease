@@ -28,8 +28,7 @@ jobs:
       - run: |
           deploy-pypi --repository-url https://test.pypi.org/legacy/
         env:
-          secrets:
-            TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
   test_testpypi:
     runs-on: ubuntu-latest
     name: "Autorelease: Test deployed"
