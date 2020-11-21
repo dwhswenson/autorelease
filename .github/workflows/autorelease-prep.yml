@@ -19,11 +19,17 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: "3.x"
+      - run: |  # TODO: move this to an action
+          source ./.github/workflows/autorelease-default-env.sh
+          cat ./.github/workflows/autorelease-env.sh >> $GITHUB_ENV
+          eval $INSTALL_AUTORELEASE
+        name: "Install autorelease"
       - run: |
-          python -m pip install -e .
-          hash -r
-      - run: deploy-pypi --repository-url https://test.pypi.org/legacy/
+          deploy-pypi --repository-url https://test.pypi.org/legacy/
+        env:
+          secrets:
+            TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
   test_testpypi:
     runs-on: ubuntu-latest
     name: "Autorelease: Test deployed"
