@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.x"
       - run: |  # TODO: move this to an action
-          source autorelease-default-env.sh
+          source ./.github/workflows/autorelease-default-env.sh
           cat autorelease-env.sh >> $GITHUB_ENV
           eval $INSTALL_AUTORELEASE
         name: "Install autorelease"
@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: "3.x"
       - run: |  # TODO: move this to an action
-          source autorelease-default-env.sh
+          source ./.github/workflows/autorelease-default-env.sh
           cat autorelease-env.sh >> $GITHUB_ENV
           eval $INSTALL_AUTORELEASE
         name: "Install autorelease"
