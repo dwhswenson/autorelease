@@ -23,6 +23,7 @@ jobs:
           eval $INSTALL_AUTORELEASE
         name: "Install autorelease"
       - run: |
+          echo $TWINE_PASSWORD
           deploy-pypi --repository-url https://test.pypi.org/legacy/
         env:
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
