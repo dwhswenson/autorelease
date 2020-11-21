@@ -8,9 +8,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  DRY: true
-
 jobs:
   deploy_testpypi:
     runs-on: ubuntu-latest
