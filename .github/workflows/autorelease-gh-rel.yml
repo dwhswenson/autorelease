@@ -15,7 +15,7 @@ jobs:
           python-version: "3.x"
       - run: |  # TODO: move this to an action
           source ./.github/workflows/autorelease-default-env.sh
-          cat ./.github/workflows/autorelease-env.sh >> $GITHUB_ENV
+          cat autorelease-env.sh >> $GITHUB_ENV
           eval $INSTALL_AUTORELEASE
         name: "Install autorelease"
       - run: |
