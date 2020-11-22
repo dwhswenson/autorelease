@@ -26,6 +26,10 @@ jobs:
           python -m pip install twine wheel
         name: "Install release tools"
       - run: |
+          bump-dev-version
+          python setup.py --version
+        name: "Bump testpypi dev version"
+      - run: |
           python setup.py sdist bdist_wheel
           twine check dist/*
         name: "Build and check package"
