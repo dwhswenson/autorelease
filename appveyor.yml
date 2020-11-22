@@ -46,4 +46,4 @@ test_script:
     # conda-forge
   - "%CMD_IN_ENV% conda config --add channels conda-forge" # gitpython
   - "%CMD_IN_ENV% conda install -y --file requirements.txt"
-  - "%CMD_IN_ENV% python release_check.py --branch %APPVEYOR_REPO_BRANCH%"
+  - "%CMD_IN_ENV% python release_check.py --branch %APPVEYOR_REPO_BRANCH% --allow-patch-skip"

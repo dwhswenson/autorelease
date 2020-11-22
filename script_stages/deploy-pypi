@@ -1,0 +1,20 @@
+#!/bin/bash
+
+EXTRA_TWINE_ARGS="$@"
+
+python -m pip install twine wheel
+
+bump-dev-version
+python setup.py --version
+python setup.py sdist bdist_wheel
+
+twine check dist/* || exit 1
+
+if [ -z "$TWINE_USERNAME" ] ; then echo "Missing TWINE_USERNAME"; fi
+if [ -z "$TWINE_PASSWORD" ] ; then echo "Missing TWINE_PASSWORD"; fi
+echo "Here's where we would upload to testpypi"
+
+echo twine upload $EXTRA_TWINE_ARGS dist/*
+if [ -z "$DRY" ]; then
+    twine upload $EXTRA_TWINE_ARGS dist/* || exit 1
+fi
