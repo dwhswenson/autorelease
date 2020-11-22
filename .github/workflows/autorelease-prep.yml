@@ -23,13 +23,20 @@ jobs:
           eval $INSTALL_AUTORELEASE
         name: "Install autorelease"
       - run: |
-          deploy-pypi --repository-url https://test.pypi.org/legacy/
-        env:
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          python -m pip install twine wheel
+        name: "Install release tools"
+      - run: |
+          python setup.py sdist bdist_wheel
+          twine check dist/*
+        name: "Build and check package"
+      - uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.testpypi_password }}
+          repository_url: https://test.pypi.org/legacy/
         name: "Deploy to testpypi"
   test_testpypi:
     runs-on: ubuntu-latest
-    name: "Autorelease: Test deployed"
+    name: "Test deployed"
     needs: deploy_testpypi
     steps:
       - uses: actions/checkout@v2
