@@ -13,6 +13,10 @@ pr:
       - master
       - stable
 
+variables:
+  - group: twine-group
+  - group: autorelease-group
+
 stages:
   - stage: testing
     displayName: Tests
@@ -86,6 +90,8 @@ stages:
         #- bash: |
             #bash <(curl -s https://codecov.io/bash)
           #displayName: 'After success'
+
+  - template: test-conditions.yml  # debugging
   - template: azure_stages/deploy_testpypi.yml
   - template: azure_stages/cut_release.yml
   - template: azure_stages/deploy_pypi.yml

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [ -z "$DRY" ]; then
+    wait-for-testpypi
+fi
+
+export PROJECT=`python setup.py --name`
+export VERSION=`pypi-max-version $PROJECT`
+echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
+if [ -z "$DRY" ]; then
+    python -m pip install --pre --force-reinstall \
+        --index-url https://test.pypi.org/simple/ \
+        --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
+fi
+
+if [ -z "$PACKAGE_IMPORT_NAME" ]; then
+    export PACKAGE_IMPORT_NAME=$PROJECT
+fi
+echo "PROJECT: $PROJECT"
+echo "PACKAGE_IMPORT_NAME: $PACKAGE_IMPORT_NAME"
+echo "AUTORELEASE_TEST_TESTPYPI: $AUTORELEASE_TEST_TESTPYPI"
+
+if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
+    eval $AUTORELEASE_TEST_TESTPYPI || exit 1
+else
+    python -m pip install pytest
+    cd ~
+    python -c "import $PACKAGE_IMPORT_NAME"
+    py.test --pyargs $PACKAGE_IMPORT_NAME  || exit 1
+fi
+

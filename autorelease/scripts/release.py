@@ -25,20 +25,14 @@ def make_logger(quiet=False):
     pass
 
 def github_url_to_owner_repo(url):
-    pattern = ".*github.com[\:\/]([^\/]+)\/(.*)\.git"
+    pattern = ".*github.com[\:\/]([^\/]+)\/(.*)"
     match = re.match(pattern, url)
-    return match.groups()
+    owner, name = match.groups()
+    if name.endswith('.git'):
+        name = name[:-4]
+    return owner, name
 
-def main():
-    parser = make_parser()
-    opts = parser.parse_args()
-
-    logger = make_logger(opts.quiet)
-
-    print(opts)
-
-    repo = git.Repo(opts.repo)
-
+def get_github_info(repo):
     upstream = [r for r in repo.remotes if r.name == 'upstream']
     origin = [r for r in repo.remotes if r.name == 'origin']
     if not upstream:
@@ -51,8 +45,26 @@ def main():
     upstream = upstream[0]
     origin = origin[0]
 
+    print(repo.remotes)
+    for remote in repo.remotes:
+        print(remote.url)
+    print(upstream.url)
+    print(origin.url)
+
     (owner, name) = github_url_to_owner_repo(upstream.url)
     (user, _) = github_url_to_owner_repo(origin.url)
+    return owner, user, name
+
+def main():
+    parser = make_parser()
+    opts = parser.parse_args()
+
+    logger = make_logger(opts.quiet)
+
+    print(opts)
+
+    repo = git.Repo(opts.repo)
+    owner, user, name = get_github_info(repo)
 
     if opts.repo_owner is not None:
         owner = opts.repo_owner
