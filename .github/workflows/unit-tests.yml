@@ -7,8 +7,8 @@ on:
   push:
     branches:
       - master
-  tags:
-    - "v*"
+    tags:
+      - "v*"
   schedule:
     - cron: "25 5 * * *"
 
