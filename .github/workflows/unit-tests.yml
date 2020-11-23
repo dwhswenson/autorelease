@@ -39,12 +39,7 @@ jobs:
       - name: "Versions"
         run: pip list
       - name: "Temporary"
-        run: python -c "
-from autorelease.scripts.release import get_github_info
-import git
-repo = git.Repo('.')
-print(get_github_info(repo))
-          "
+        run: python -c " from autorelease.scripts.release import get_github_info; import git; repo = git.Repo('.'); print(get_github_info(repo)); "
       - name: "Tests"
         env:
           PR_BRANCH: ${{ github.event.pull_request.base.ref }}
