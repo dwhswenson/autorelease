@@ -40,10 +40,10 @@ jobs:
         run: pip list
       - name: "Temporary"
         run: python -c "
-          from autorelease.scripts.release import get_github_info
-          import git
-          repo = git.Repo('.')
-          print(get_github_info(repo))
+from autorelease.scripts.release import get_github_info
+import git
+repo = git.Repo('.')
+print(get_github_info(repo))
           "
       - name: "Tests"
         env:
