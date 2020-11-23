@@ -25,9 +25,12 @@ def make_logger(quiet=False):
     pass
 
 def github_url_to_owner_repo(url):
-    pattern = ".*github.com[\:\/]([^\/]+)\/(.*)\.git"
+    pattern = ".*github.com[\:\/]([^\/]+)\/(.*)"
     match = re.match(pattern, url)
-    return match.groups()
+    owner, name = match.group()
+    if name.endswith('.git'):
+        name = name[:-4]
+    return owner, name
 
 def get_github_info(repo):
     upstream = [r for r in repo.remotes if r.name == 'upstream']
