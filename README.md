@@ -13,17 +13,19 @@ release versions of the code). The workflow for a release is therefore:
    post will be the release notes.
 2. Merge the PR.
 
-That's it.
+That's it. Autorelease handles the rest.
 
-When you make the PR to a stable branch, the CI will deploy the package to
+When you make the PR to a stable branch, Autorelease will deploy the package to
 testpypi, and re-download it and test it again. This ensures that you don't
-publish broken packages. After you merge to the stable branch, the CI will cut
-a new release on GitHub, and then release on PyPI.
+publish broken packages. After you merge to the stable branch, Autorelease will
+cut a new release on GitHub, and then publish the release on PyPI.
 
 Tools included:
 
 * Travis config imports and scripts to automatically test-deploy on testpypi,
   then cut a GitHub release, then deploy to PyPI.
+* Vendor-able GitHub Actions workflows for test-deploy, GitHub release, and
+PyPI deploy.
 * Vendor-able `version.py` that gives one true location for version
   (`setup.cfg`) while also enabling developer installs to give full and correct
   version information.
