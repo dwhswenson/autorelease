@@ -27,7 +27,7 @@ def make_logger(quiet=False):
 def github_url_to_owner_repo(url):
     pattern = ".*github.com[\:\/]([^\/]+)\/(.*)"
     match = re.match(pattern, url)
-    owner, name = match.group()
+    owner, name = match.groups()
     if name.endswith('.git'):
         name = name[:-4]
     return owner, name
