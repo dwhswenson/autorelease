@@ -83,6 +83,17 @@ class DefaultCheckRunner(CheckRunner):
             )
         ]
 
+    @staticmethod
+    def _get_branch_name(branch_name):
+        if branch_name.startswith('refs/heads/'):
+            branch = branch_name[11:]
+        elif branch_name.startswith('refs/tags/'):
+            branch = branch_name[10:]
+        else:
+            branch = branch_name
+
+        return branch
+
     def select_tests_from_sysargs(self):
         # TODO: this can be cleaned up by separating reusable parts
         parser = argparse.ArgumentParser()
@@ -91,17 +102,13 @@ class DefaultCheckRunner(CheckRunner):
         parser.add_argument('--allow-patch-skip', action='store_true',
                             default=False)
         opts = parser.parse_args()
-        if opts.branch.startswith('refs/heads/'):
-            branch = opts.branch[11:]
-        elif opts.branch.startswith('refs/tags/'):
-            branch = opts.branch[10:]
-        else:
-            branch = opts.branch
 
+        branch = self._get_branch_name(opts.branch)
         if branch in self.release_branches:
             print("TESTING AS RELEASE")
             allow_equal = (opts.event == 'cron'
-                           or opts.branch == self.tag_branch)
+                           or opts.event == 'schedule'
+                           or branch == self.tag_branch)
             tests = (self.tests
                      + self._reasonable_desired_version_test(
                          allow_equal=allow_equal,
