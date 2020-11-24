@@ -91,7 +91,12 @@ class DefaultCheckRunner(CheckRunner):
         parser.add_argument('--allow-patch-skip', action='store_true',
                             default=False)
         opts = parser.parse_args()
-        if opts.branch in self.release_branches:
+        if opts.branch.startswith('refs/heads/'):
+            branch = opts.branch[11:]
+        else:
+            branch = opts.branch
+
+        if branch in self.release_branches:
             print("TESTING AS RELEASE")
             allow_equal = (opts.event == 'cron'
                            or opts.branch == self.tag_branch)
