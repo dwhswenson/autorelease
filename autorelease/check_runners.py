@@ -93,6 +93,8 @@ class DefaultCheckRunner(CheckRunner):
         opts = parser.parse_args()
         if opts.branch.startswith('refs/heads/'):
             branch = opts.branch[11:]
+        elif opts.branch.startswith('refs/tags/'):
+            branch = opts.branch[10:]
         else:
             branch = opts.branch
 

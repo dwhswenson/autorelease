@@ -47,7 +47,7 @@ jobs:
           EVENT: ${{ github.event_name }}
           #EVENT_INFO: ${{ toJson(github.event) }}  # useful debug
         run: |
-          if [ "$EVENT" = "push" ]; then
+          if [ "$EVENT" != "pull_request" ]; then
             BRANCH=$REF
           else
             BRANCH=$PR_BRANCH
