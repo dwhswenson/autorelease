@@ -97,7 +97,7 @@ class DefaultCheckRunner(CheckRunner):
 
     def select_tests(self):
         print(os.environ.get("GITHUB_ACTION"))
-        if os.environ.get("GITHUB_ACTION", None) == "true":
+        if os.environ.get("GITHUB_ACTION", None):
             tests = self.select_test_from_github_env()
         else:
             tests = self.select_tests_from_sysargs()
