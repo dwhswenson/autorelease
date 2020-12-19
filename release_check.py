@@ -27,7 +27,7 @@ if __name__ == "__main__":
         repo_path='.'
     )
     checker.release_branches = RELEASE_BRANCHES + [RELEASE_TAG]
-    tests = checker.select_tests_from_sysargs()
+    tests = checker.select_tests()
 
     skip = []
     #skip = [checker.git_repo_checks.reasonable_desired_version]

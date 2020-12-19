@@ -1,5 +1,6 @@
 from __future__ import print_function
 import sys
+import os
 import textwrap
 import argparse
 import packaging.version as vers
@@ -94,6 +95,15 @@ class DefaultCheckRunner(CheckRunner):
 
         return branch
 
+    def select_tests(self):
+        print(os.environ.get("GITHUB_ACTION"))
+        if os.environ.get("GITHUB_ACTION", None):
+            tests = self.select_test_from_github_env()
+        else:
+            tests = self.select_tests_from_sysargs()
+        return tests
+
+
     def select_tests_from_sysargs(self):
         # TODO: this can be cleaned up by separating reusable parts
         parser = argparse.ArgumentParser()
@@ -104,6 +114,28 @@ class DefaultCheckRunner(CheckRunner):
         opts = parser.parse_args()
 
         branch = self._get_branch_name(opts.branch)
+        return self.select_tests_from_branch_event(branch, opts.event,
+                                                   opts.allow_patch_skip)
+
+    def select_test_from_github_env(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--allow-patch-skip', action='store_true',
+                            default=False)
+        opts = parser.parse_args()
+        event = os.environ.get("GITHUB_EVENT", None)
+        ref = os.environ.get("GITHUB_REF", None)
+        pr_ref = os.environ.get("GITHUB_BASE_REF", None)
+        if event == "pull_request" and pr_ref is not None:
+            branch = pr_ref
+        elif event != "pull_request":
+            branch = ref
+        else:
+            raise RuntimeError("PR without branch?")
+        return self.select_tests_from_branch_event(branch, event,
+                                                   opts.allow_patch_skip)
+
+
+    def select_tests_from_branch_event(self, branch, event, allow_patch_skip):
         if branch in self.release_branches:
             print("TESTING AS RELEASE")
             allow_equal = (opts.event == 'cron'

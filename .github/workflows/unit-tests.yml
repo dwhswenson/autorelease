@@ -52,10 +52,10 @@ jobs:
           else
             BRANCH=$PR_BRANCH
           fi
+          echo "Generic: $GITHUB_REF"
           echo "PUSH_REF: $PUSH_REF"
           echo "EVENT: $EVENT"
           echo "BRANCH: $BRANCH"
           python -c "import autorelease"
           autorelease-release -h
-          python release_check.py --branch $BRANCH --event $EVENT \
-              --allow-patch-skip
+          python release_check.py
