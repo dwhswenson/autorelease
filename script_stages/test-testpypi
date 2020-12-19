@@ -25,7 +25,7 @@ if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
 else
     python -m pip install pytest
     cd ~
-    python -c "import $PACKAGE_IMPORT_NAME"
+    python -c "import $PACKAGE_IMPORT_NAME" || exit 1
     py.test --pyargs $PACKAGE_IMPORT_NAME  || exit 1
 fi
 
