@@ -106,9 +106,12 @@ class DefaultCheckRunner(CheckRunner):
         opts = parser.parse_args()
 
         branch = self._get_branch_name(opts.branch)
-        return self.select_tests_from_branch_event(branch, opts.event)
+        return self.select_tests_from_branch_event(branch, opts.event,
+                                                   opts.allow_patch_skip)
 
     def select_test_from_github_env(self):
+        parser = argparse.ArgumentParser()
+        opts = parser.parse_args()
         event = os.environ.get("GITHUB_EVENT", None)
         ref = os.environ.get("GITHUB_REF", None)
         pr_ref = os.environ.get("GITHUB_BASE_REF", None)
@@ -118,10 +121,11 @@ class DefaultCheckRunner(CheckRunner):
             branch = ref
         else:
             raise RuntimeError("PR without branch?")
-        return self.select_tests_from_branch_event(branch, event)
+        return self.select_tests_from_branch_event(branch, event,
+                                                   opts.allow_patch_skip)
 
 
-    def select_tests_from_branch_event(self, branch, event):
+    def select_tests_from_branch_event(self, branch, event, allow_patch_skip):
         if branch in self.release_branches:
             print("TESTING AS RELEASE")
             allow_equal = (opts.event == 'cron'
