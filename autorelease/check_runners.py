@@ -111,6 +111,8 @@ class DefaultCheckRunner(CheckRunner):
 
     def select_test_from_github_env(self):
         parser = argparse.ArgumentParser()
+        parser.add_argument('--allow-patch-skip', action='store_true',
+                            default=False)
         opts = parser.parse_args()
         event = os.environ.get("GITHUB_EVENT", None)
         ref = os.environ.get("GITHUB_REF", None)
