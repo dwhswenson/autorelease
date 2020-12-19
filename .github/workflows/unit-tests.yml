@@ -58,5 +58,4 @@ jobs:
           echo "BRANCH: $BRANCH"
           python -c "import autorelease"
           autorelease-release -h
-          python release_check.py --branch $REF --event $EVENT \
-              --allow-patch-skip
+          python release_check.py
