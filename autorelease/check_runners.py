@@ -138,13 +138,13 @@ class DefaultCheckRunner(CheckRunner):
     def select_tests_from_branch_event(self, branch, event, allow_patch_skip):
         if branch in self.release_branches:
             print("TESTING AS RELEASE")
-            allow_equal = (opts.event == 'cron'
-                           or opts.event == 'schedule'
+            allow_equal = (event == 'cron'
+                           or event == 'schedule'
                            or branch == self.tag_branch)
             tests = (self.tests
                      + self._reasonable_desired_version_test(
                          allow_equal=allow_equal,
-                         allow_patch_skip=opts.allow_patch_skip)
+                         allow_patch_skip=allow_patch_skip)
                      + self._is_release_tests(expected=True))
         else:
             print("TESTING AS NONRELEASE")
