@@ -95,6 +95,13 @@ class DefaultCheckRunner(CheckRunner):
 
         return branch
 
+    def select_tests(self):
+        if os.environ.get("GITHUB_ACTION", None) == "true":
+            tests = select_test_from_github_env()
+        else:
+            tests = select_tests_from_sysargs()
+        return tests
+
 
     def select_tests_from_sysargs(self):
         # TODO: this can be cleaned up by separating reusable parts
