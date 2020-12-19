@@ -122,7 +122,7 @@ class DefaultCheckRunner(CheckRunner):
         parser.add_argument('--allow-patch-skip', action='store_true',
                             default=False)
         opts = parser.parse_args()
-        event = os.environ.get("GITHUB_EVENT", None)
+        event = os.environ.get("GITHUB_EVENT_NAME", None)
         ref = os.environ.get("GITHUB_REF", None)
         pr_ref = os.environ.get("GITHUB_BASE_REF", None)
         print(ref, pr_ref)
