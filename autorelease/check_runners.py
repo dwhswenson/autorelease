@@ -122,15 +122,18 @@ class DefaultCheckRunner(CheckRunner):
         parser.add_argument('--allow-patch-skip', action='store_true',
                             default=False)
         opts = parser.parse_args()
-        event = os.environ.get("GITHUB_EVENT", None)
+        event = os.environ.get("GITHUB_EVENT_NAME", None)
         ref = os.environ.get("GITHUB_REF", None)
         pr_ref = os.environ.get("GITHUB_BASE_REF", None)
+        print(ref, pr_ref)
+        print(os.environ.get("GITHUB_HEAD_REF", None))
         if event == "pull_request" and pr_ref is not None:
             branch = pr_ref
         elif event != "pull_request":
             branch = ref
         else:
             raise RuntimeError("PR without branch?")
+        print(branch, event)
         return self.select_tests_from_branch_event(branch, event,
                                                    opts.allow_patch_skip)
 
@@ -138,13 +141,13 @@ class DefaultCheckRunner(CheckRunner):
     def select_tests_from_branch_event(self, branch, event, allow_patch_skip):
         if branch in self.release_branches:
             print("TESTING AS RELEASE")
-            allow_equal = (opts.event == 'cron'
-                           or opts.event == 'schedule'
+            allow_equal = (event == 'cron'
+                           or event == 'schedule'
                            or branch == self.tag_branch)
             tests = (self.tests
                      + self._reasonable_desired_version_test(
                          allow_equal=allow_equal,
-                         allow_patch_skip=opts.allow_patch_skip)
+                         allow_patch_skip=allow_patch_skip)
                      + self._is_release_tests(expected=True))
         else:
             print("TESTING AS NONRELEASE")
