@@ -125,6 +125,8 @@ class DefaultCheckRunner(CheckRunner):
         event = os.environ.get("GITHUB_EVENT", None)
         ref = os.environ.get("GITHUB_REF", None)
         pr_ref = os.environ.get("GITHUB_BASE_REF", None)
+        print(ref, pr_ref)
+        print(os.environ.get("GITHUB_HEAD_REF", None))
         if event == "pull_request" and pr_ref is not None:
             branch = pr_ref
         elif event != "pull_request":
