@@ -131,6 +131,7 @@ class DefaultCheckRunner(CheckRunner):
             branch = ref
         else:
             raise RuntimeError("PR without branch?")
+        print(branch, event)
         return self.select_tests_from_branch_event(branch, event,
                                                    opts.allow_patch_skip)
 
