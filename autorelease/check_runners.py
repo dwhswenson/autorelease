@@ -94,6 +94,7 @@ class DefaultCheckRunner(CheckRunner):
 
         return branch
 
+
     def select_tests_from_sysargs(self):
         # TODO: this can be cleaned up by separating reusable parts
         parser = argparse.ArgumentParser()
@@ -104,6 +105,22 @@ class DefaultCheckRunner(CheckRunner):
         opts = parser.parse_args()
 
         branch = self._get_branch_name(opts.branch)
+        return self.select_tests_from_branch_event(branch, opts.event)
+
+    def select_test_from_github_env(self):
+        event = os.environ.get("GITHUB_EVENT", None)
+        ref = os.environ.get("GITHUB_REF", None)
+        pr_ref = os.environ.get("GITHUB_BASE_REF", None)
+        if event == "pull_request" and pr_ref is not None:
+            branch = pr_ref
+        elif event != "pull_request":
+            branch = ref
+        else:
+            raise RuntimeError("PR without branch?")
+        return self.select_tests_from_branch_event(branch, event)
+
+
+    def select_tests_from_branch_event(self, branch, event):
         if branch in self.release_branches:
             print("TESTING AS RELEASE")
             allow_equal = (opts.event == 'cron'

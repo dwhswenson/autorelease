@@ -14,7 +14,9 @@ jobs:
           python-version: "3.x"
       - run: |  # TODO: move this to an action
           source ./.github/workflows/autorelease-default-env.sh
-          cat autorelease-env.sh >> $GITHUB_ENV
+          if [ -f "autorelease-env.sh" ]; then
+            cat autorelease-env.sh >> $GITHUB_ENV
+          fi
           eval $INSTALL_AUTORELEASE
         name: "Install autorelease"
       - run: |
@@ -27,5 +29,5 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.pypi_password }}
-        name: "Deploy to testpypi"
+        name: "Deploy to pypi"
  
