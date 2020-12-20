@@ -75,6 +75,8 @@ class DefaultCheckRunner(CheckRunner):
 
     def _reasonable_desired_version_test(self, allow_equal,
                                          allow_patch_skip=False):
+        print("allow equal ", allow_equal)
+        print("allow patch skip", allow_patch_skip)
         return [
             (
                 self.git_repo_checks.reasonable_desired_version, [],
@@ -145,8 +147,6 @@ class DefaultCheckRunner(CheckRunner):
             allow_equal = (event == 'cron'
                            or event == 'schedule'
                            or branch == self.tag_branch)
-            print("allow equal ", allow_equal)
-            print("allow patch skip", allow_patch_skip)
             tests = (self.tests
                      + self._reasonable_desired_version_test(
                          allow_equal=allow_equal,
