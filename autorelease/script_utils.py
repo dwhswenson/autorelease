@@ -100,6 +100,7 @@ class AutoreleaseParsedArguments(object):
     def repo(self):
         if self._repo is None and hasattr(self.opts, 'repo'):
             self._repo = git.Repo(self.opts.repo)
+            self._repo.remotes.origin.fetch()
         return self._repo
 
     @property

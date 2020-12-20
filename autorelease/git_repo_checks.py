@@ -25,6 +25,7 @@ class GitReleaseChecks(object):
     def __init__(self, repo_path='.'):
         self.repo_path = repo_path
         self.repo = git.Repo(self.repo_path)
+        self.repo.remotes.origin.fetch()
         self.stable_branch = 'stable'
         self.dev_branch = 'master'
 
@@ -87,12 +88,17 @@ class GitReleaseChecks(object):
         v_desired = vers.Version(desired_version)
         v_max = vers.Version(max_version)
 
-        if allow_equal and v_desired == v_max:
-            return ""
+        no_increase_str = ("Bad update: New version doesn't increase on "
+                           "last tag: " + update_str + "\n")
+
+        if v_desired == v_max:
+            if allow_equal:
+                return ""
+            else:
+                return no_increase_str
 
         if v_desired < v_max:
-            return ("Bad update: New version doesn't increase on last tag: "
-                    + update_str + "\n")
+            return no_increase_str
 
         bad_update = skipped_version((old_major, old_minor, old_patch),
                                      (new_major, new_minor, new_patch),

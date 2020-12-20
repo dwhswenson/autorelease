@@ -75,6 +75,8 @@ class DefaultCheckRunner(CheckRunner):
 
     def _reasonable_desired_version_test(self, allow_equal,
                                          allow_patch_skip=False):
+        print("allow equal ", allow_equal)
+        print("allow patch skip", allow_patch_skip)
         return [
             (
                 self.git_repo_checks.reasonable_desired_version, [],
