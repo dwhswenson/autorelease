@@ -32,6 +32,10 @@ if __name__ == "__main__":
     # DEBUG
     import git
     repo = git.Repo('.')
+    print(repo.remotes[0])
+    fetched = repo.remotes.origin.fetch()
+    for fetch in fetched:
+        print(fetch)
     print(repo.tags)
 
     skip = []
