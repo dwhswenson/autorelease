@@ -145,6 +145,8 @@ class DefaultCheckRunner(CheckRunner):
             allow_equal = (event == 'cron'
                            or event == 'schedule'
                            or branch == self.tag_branch)
+            print("allow equal ", allow_equal)
+            print("allow patch skip", allow_patch_skip)
             tests = (self.tests
                      + self._reasonable_desired_version_test(
                          allow_equal=allow_equal,
