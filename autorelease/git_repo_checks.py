@@ -25,6 +25,7 @@ class GitReleaseChecks(object):
     def __init__(self, repo_path='.'):
         self.repo_path = repo_path
         self.repo = git.Repo(self.repo_path)
+        self.repo.origin.fetch()
         self.stable_branch = 'stable'
         self.dev_branch = 'master'
 

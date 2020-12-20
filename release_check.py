@@ -29,15 +29,6 @@ if __name__ == "__main__":
     checker.release_branches = RELEASE_BRANCHES + [RELEASE_TAG]
     tests = checker.select_tests()
 
-    # DEBUG
-    import git
-    repo = git.Repo('.')
-    print(repo.remotes[0])
-    fetched = repo.remotes.origin.fetch()
-    for fetch in fetched:
-        print(fetch)
-    print(repo.tags)
-
     skip = []
     #skip = [checker.git_repo_checks.reasonable_desired_version]
     for test in skip:

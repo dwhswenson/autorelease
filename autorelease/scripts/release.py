@@ -64,6 +64,7 @@ def main():
     print(opts)
 
     repo = git.Repo(opts.repo)
+    repo.remotes.origin.fetch()
     owner, user, name = get_github_info(repo)
 
     if opts.repo_owner is not None:
