@@ -29,7 +29,6 @@ jobs:
           if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
             eval $AUTORELEASE_TEST_TESTPYPI
           else
-            cd ~
             python -c "import $PACKAGE_IMPORT_NAME"
             py.test --pyargs $PACKAGE_IMPORT_NAME
           fi
