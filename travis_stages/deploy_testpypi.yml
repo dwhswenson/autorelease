@@ -8,6 +8,7 @@ jobs:
       install:
         - pip install twine
         - pip install autorelease
+        - python -m pip install --upgrade --upgrade-strategy eager twine
         #- pip install git+https://github.com/dwhswenson/autorelease@ops_fixes
         # this is for debugging anything in autorelease used here (change
         # the branch tag to whatever is needed)
