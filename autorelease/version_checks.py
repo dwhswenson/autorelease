@@ -3,6 +3,31 @@ from __future__ import print_function
 import re
 import packaging.version as vers
 
+from autorelease.version import get_setup_version  # reuse the vendored
+from autorelease.utils import conda_recipe_version
+
+version_getters = {
+    'setup-cfg': lambda path: get_setup_version(None, path),
+    'conda': conda_recipe_version,
+}
+
+default_args = {
+    'setup-cfg': ['.']
+}
+
+def parse_versions(versions_list):
+    versions = {}
+    for version_type in versions_list:
+        if isinstance(version_type, dict):
+            version_type, arg = list(version_type.items())[0]
+            args = [arg]
+        else:
+            args = default_args.get(version_type, [])
+
+        versions[version_type] = version_getters[version_type](*args)
+    return versions
+
+
 class VersionReleaseChecks(object):
     def __init__(self, versions, strictness='strict'):
         self.versions = versions

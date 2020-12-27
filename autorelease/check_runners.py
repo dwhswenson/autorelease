@@ -51,7 +51,8 @@ class DefaultCheckRunner(CheckRunner):
         self.git_repo_checks = autorelease.GitReleaseChecks(
             repo_path=repo_path
         )
-        self.desired_version = vers.Version(versions['setup.py'])
+        version_0 = list(versions.values())[0]
+        self.desired_version = vers.Version(version_0)
         super(DefaultCheckRunner, self).__init__(output=output)
         self.consistency_test = (
             self.version_checks.consistency, [],
@@ -119,11 +120,7 @@ class DefaultCheckRunner(CheckRunner):
         return self.select_tests_from_branch_event(branch, opts.event,
                                                    opts.allow_patch_skip)
 
-    def select_test_from_github_env(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--allow-patch-skip', action='store_true',
-                            default=False)
-        opts = parser.parse_args()
+    def get_branch_event_from_github_env(self):
         event = os.environ.get("GITHUB_EVENT_NAME", None)
         ref = os.environ.get("GITHUB_REF", None)
         pr_ref = os.environ.get("GITHUB_BASE_REF", None)
@@ -136,6 +133,14 @@ class DefaultCheckRunner(CheckRunner):
         else:
             raise RuntimeError("PR without branch?")
         branch = self._get_branch_name(branch)
+        return branch, event
+
+    def select_test_from_github_env(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--allow-patch-skip', action='store_true',
+                            default=False)
+        opts = parser.parse_args()
+        branch, event = self.get_branch_event_from_github_env()
         print(branch, event)
         return self.select_tests_from_branch_event(branch, event,
                                                    opts.allow_patch_skip)
