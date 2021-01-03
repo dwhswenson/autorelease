@@ -2,7 +2,6 @@ if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
     eval $AUTORELEASE_TEST_TESTPYPI || exit 1
 else
     python -m pip install pytest
-    cd ~
     python -c "import $PACKAGE_IMPORT_NAME" || exit 1
     py.test --pyargs $PACKAGE_IMPORT_NAME  || exit 1
 fi
