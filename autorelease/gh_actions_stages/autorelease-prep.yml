@@ -63,10 +63,10 @@ jobs:
           if [ -f "autorelease-env.sh" ]; then
             cat autorelease-env.sh >> $GITHUB_ENV
           fi
-          if [ -f "./.autorelease/test-testpypi.sh" ]; then
-            source ./.autorelease/test-testpypi.sh
-          else
+          #if [ -f "./.autorelease/test-testpypi.sh" ]; then
+            #source ./.autorelease/test-testpypi.sh
+          #else
             test-testpypi
-          fi
+          #fi
         name: "Test testpypi version"
 
