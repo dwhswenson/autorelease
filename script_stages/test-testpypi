@@ -1,10 +1,13 @@
 #!/bin/bash
 
 if [ -f "./.autorelease/test-testpypi" ]; then
+    echo "Using custom test-testpypi"
     source ./.autorelease/test-testpypi || exit 1
 elif [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
+    echo "Using custom AUTORELEASE_TEST_TESTPYPI: $AUTORELEASE_TEST_TESTPYPI"
     eval $AUTORELEASE_TEST_TESTPYPI || exit 1
 else
+    echo "Using default test-testpypi"
     python -m pip install pytest
     python -c "import $PACKAGE_IMPORT_NAME" || exit 1
     py.test --pyargs $PACKAGE_IMPORT_NAME  || exit 1
