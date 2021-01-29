@@ -1,4 +1,8 @@
-if [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
+#!/bin/bash
+
+if [ -f "./.autorelease/test-testpypi" ]; then
+    source ./.autorelease/test-testpypi || exit 1
+elif [ -n "$AUTORELEASE_TEST_TESTPYPI" ]; then
     eval $AUTORELEASE_TEST_TESTPYPI || exit 1
 else
     python -m pip install pytest
