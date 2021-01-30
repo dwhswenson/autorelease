@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo `pwd`
 if [ -f "./.autorelease/test-testpypi" ]; then
     echo "Using custom test-testpypi"
     source ./.autorelease/test-testpypi || exit 1
