@@ -8,6 +8,9 @@ export PROJECT=`python setup.py --name`
 export VERSION=`pypi-max-version $PROJECT`
 echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
 if [ -z "$DRY" ]; then
+    if [ -f "./.autorelease/before-install" ];
+        source ./.autorelease/before-install || exit 1
+    fi
     python -m pip install --pre --force-reinstall \
         --index-url https://test.pypi.org/simple/ \
         --extra-index-url https://pypi.org/simple ${PROJECT}==${VERSION}
