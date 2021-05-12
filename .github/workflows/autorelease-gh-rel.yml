@@ -1,3 +1,5 @@
+# Vendored from Autorelease 0.3.1
+# Update by updating Autorelease and running `autorelease vendor actions`
 name: Autorelease
 on:
   push:

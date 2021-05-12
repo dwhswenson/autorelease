@@ -1,8 +1,8 @@
-import pkg_resources
+import string
 import pathlib
-import shutil
-
-import click
+import pkg_resources
+from packaging.version import Version
+import autorelease
 
 def vendor(resources, base_path, relative_target_dir):
     for resource in resources:
@@ -12,7 +12,12 @@ def vendor(resources, base_path, relative_target_dir):
         target_dir.mkdir(parents=True, exist_ok=True)
         target_loc = base_path / relative_target_dir / name
         # print(f"cp {orig_loc} {target_loc}")
-        shutil.copy(orig_loc, target_loc)
+        with open(orig_loc, mode='r') as rfile:
+            template = string.Template(rfile.read())
+
+        version = Version(autorelease.version.version).base_version
+        with open(target_loc, mode='w') as wfile:
+            wfile.write(template.substitute(VERSION=version))
 
 def vendor_actions(base_path):
     resources = ['autorelease-default-env.sh', 'autorelease-prep.yml',
