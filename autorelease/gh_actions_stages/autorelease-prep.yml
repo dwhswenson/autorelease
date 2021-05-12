@@ -1,9 +1,10 @@
 # Vendored from Autorelease $VERSION
 # Update by updating Autorelease and running `autorelease vendor actions`
-name: "Autorelease"
+name: "Autorelease testpypi"
 on:
   pull_request:
     branches:
+      # TODO: this should come from yaml conf
       - stable
 
 defaults:
