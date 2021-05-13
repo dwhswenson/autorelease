@@ -1,9 +1,10 @@
 # Vendored from Autorelease 0.3.1
 # Update by updating Autorelease and running `autorelease vendor actions`
-name: Autorelease
+name: "Autorelease Release"
 on:
   push:
     branches:
+      # TODO: this should come from yaml conf
       - stable
 
 jobs:
@@ -33,3 +34,4 @@ jobs:
           autorelease-release --project $PROJECT --version $VERSION --token $AUTORELEASE_TOKEN
         env:
           AUTORELEASE_TOKEN: ${{ secrets.AUTORELEASE_TOKEN }}
+        name: "Cut release"
