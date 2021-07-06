@@ -1,9 +1,10 @@
-# File vencdored from Autorelease; specific version information should be in
-# the INSTALL_AUTORELEASE variable in autorelease-default-env.sh
-name: "Autorelease"
+# Vendored from Autorelease 0.3.1
+# Update by updating Autorelease and running `autorelease vendor actions`
+name: "Autorelease testpypi"
 on:
   pull_request:
     branches:
+      # TODO: this should come from yaml conf
       - stable
 
 defaults:

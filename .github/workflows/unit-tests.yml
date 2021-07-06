@@ -2,11 +2,11 @@ name: "Unit tests"
 on:
   pull_request:
     branches:
-      - master
+      - main
       - stable
   push:
     branches:
-      - master
+      - main
     tags:
       - "v*"
   schedule:
