@@ -1,9 +1,10 @@
-# File vencdored from Autorelease; specific version information should be in
-# the INSTALL_AUTORELEASE variable in autorelease-default-env.sh
-name: "Autorelease"
+# Vendored from Autorelease $VERSION
+# Update by updating Autorelease and running `autorelease vendor actions`
+name: "Autorelease testpypi"
 on:
   pull_request:
     branches:
+      # TODO: this should come from yaml conf
       - stable
 
 defaults:
@@ -22,12 +23,12 @@ jobs:
       - run: |  # TODO: move this to an action
           source ./.github/workflows/autorelease-default-env.sh
           if [ -f "autorelease-env.sh" ]; then
-            cat autorelease-env.sh >> $GITHUB_ENV
+            cat autorelease-env.sh >> $$GITHUB_ENV
           fi
           if [ -f "./.autorelease/install-autorelease" ]; then
             source ./.autorelease/install-autorelease
           else
-            eval $INSTALL_AUTORELEASE
+            eval $$INSTALL_AUTORELEASE
           fi
         name: "Install autorelease"
       - run: |
@@ -43,7 +44,7 @@ jobs:
         name: "Build and check package"
       - uses: pypa/gh-action-pypi-publish@master
         with:
-          password: ${{ secrets.testpypi_password }}
+          password: $${{ secrets.testpypi_password }}
           repository_url: https://test.pypi.org/legacy/
         name: "Deploy to testpypi"
   test_testpypi:
@@ -58,12 +59,12 @@ jobs:
       - run: |  # TODO: move this to an action
           source ./.github/workflows/autorelease-default-env.sh
           if [ -f "autorelease-env.sh" ]; then
-            cat autorelease-env.sh >> $GITHUB_ENV
+            cat autorelease-env.sh >> $$GITHUB_ENV
           fi
           if [ -f "./.autorelease/install-autorelease" ]; then
             source ./.autorelease/install-autorelease
           else
-            eval $INSTALL_AUTORELEASE
+            eval $$INSTALL_AUTORELEASE
           fi
         name: "Install autorelease"
       - name: "Install testpypi version"
@@ -71,6 +72,6 @@ jobs:
       - name: "Test testpypi version"
         run: |
           if [ -f "autorelease-env.sh" ]; then
-            cat autorelease-env.sh >> $GITHUB_ENV
+            cat autorelease-env.sh >> $$GITHUB_ENV
           fi
           test-testpypi
