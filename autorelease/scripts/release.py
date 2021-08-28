@@ -82,7 +82,7 @@ def main():
         repo=repo,
         github_user=github_user
     )
-    
+
     # testing
     expected_pr = releaser.find_relevant_pr()
     print("Expected PR: " + str(expected_pr))
