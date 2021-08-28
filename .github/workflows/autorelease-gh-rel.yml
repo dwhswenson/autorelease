@@ -1,4 +1,4 @@
-# Vendored from Autorelease 0.3.1
+# Vendored from Autorelease 0.3.2
 # Update by updating Autorelease and running `autorelease vendor actions`
 name: "Autorelease Release"
 on:
@@ -9,6 +9,7 @@ on:
 
 jobs:
   release-gh:
+    if: ${{ github.repository == 'dwhswenson/autorelease' }}
     runs-on: ubuntu-latest
     name: "Cut release"
     steps:

@@ -1,4 +1,4 @@
-# Vendored from Autorelease 0.3.1
+# Vendored from Autorelease 0.3.2
 # Update by updating Autorelease and running `autorelease vendor actions`
 name: "Autorelease Deploy"
 on:
@@ -7,6 +7,7 @@ on:
 
 jobs:
   deploy_pypi:
+    if: ${{ github.repository == 'dwhswenson/autorelease' }}
     runs-on: ubuntu-latest
     name: "Deploy to PyPI"
     steps:
