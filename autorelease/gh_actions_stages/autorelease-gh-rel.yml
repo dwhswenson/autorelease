@@ -9,6 +9,7 @@ on:
 
 jobs:
   release-gh:
+    if: $${{ github.repository == '$GITHUB_REPO' }}
     runs-on: ubuntu-latest
     name: "Cut release"
     steps:
