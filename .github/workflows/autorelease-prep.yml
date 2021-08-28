@@ -1,4 +1,4 @@
-# Vendored from Autorelease 0.3.1
+# Vendored from Autorelease 0.3.2
 # Update by updating Autorelease and running `autorelease vendor actions`
 name: "Autorelease testpypi"
 on:
@@ -13,6 +13,7 @@ defaults:
 
 jobs:
   deploy_testpypi:
+    if: ${{ github.repository == 'dwhswenson/autorelease' }}
     runs-on: ubuntu-latest
     name: "Deployment test"
     steps:
@@ -48,6 +49,7 @@ jobs:
           repository_url: https://test.pypi.org/legacy/
         name: "Deploy to testpypi"
   test_testpypi:
+    if: ${{ github.repository == 'dwhswenson/autorelease' }}
     runs-on: ubuntu-latest
     name: "Test deployed"
     needs: deploy_testpypi
