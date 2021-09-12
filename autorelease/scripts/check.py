@@ -24,9 +24,9 @@ def checker_from_yaml_dict(release_check):
     return checker
 
 
-def run_checks(yml, branch=None, event=None, allow_patch_skip=False):
-    dct = yaml.load(yml, Loader=yaml.FullLoader)
+def run_checks(dct, branch=None, event=None, allow_patch_skip=False):
     release_check = dct['release-check']
+    release_check.update(dct['repo'])
     checker = checker_from_yaml_dict(release_check)
     if branch is None and event is None:
         branch, event = checker.get_branch_event_from_github_env()
