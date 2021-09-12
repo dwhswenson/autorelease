@@ -6,9 +6,20 @@ import packaging.version as vers
 from autorelease.version import get_setup_version  # reuse the vendored
 from autorelease.utils import conda_recipe_version
 
+import importlib
+
+def import_and_get(fully_qualified):
+    path = fully_qualified.split('.')
+    to_load = path.pop(-1)
+    module = ".".join(path)
+    mod = importlib.import_module(module)
+    return getattr(mod, to_load)
+
+
 version_getters = {
     'setup-cfg': lambda path: get_setup_version(None, path),
     'conda': conda_recipe_version,
+    'getattr': import_and_get,
 }
 
 default_args = {
