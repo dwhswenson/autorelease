@@ -1,5 +1,8 @@
 import string
-import pathlib
+try:
+    import pathlib
+except ImportError:  # py2
+    import pathlib2
 import pkg_resources
 from packaging.version import Version
 import autorelease
