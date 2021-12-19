@@ -4,3 +4,4 @@ pyyaml
 gitpython
 requests
 future
+pathlib2
