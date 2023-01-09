@@ -1,0 +1,40 @@
+# project configuration
+project:
+  project_name: Autorelease
+  repo_owner: dwhswenson
+  repo_name: autorelease
+
+# repo configuration: how you organize releases and the repo
+repo:
+  # these are relative to where you run the script from
+  repo-path:  '.'
+  setup-path: '.'
+  release-branches:
+    - stable
+  release-tag: "v{BASE_VERSION}"
+
+# writing release notes
+notes:
+  labels:
+    - label: enhancement
+      heading: New features
+    - label: bugfix
+      heading: Bugs fixed
+    - label: misc PR
+      heading: Miscellaneous improvements
+
+  standard_contributors:
+    - dwhswenson
+
+# running release checks
+release-check:
+  versions:
+    - setup-cfg
+    - conda: devtools/conda-recipe/meta.yaml
+  skip: []
+
+
+# TODO: this replaces various environment variables
+env:
+  package-import-name: 'autorelease'
+  dry: ""
