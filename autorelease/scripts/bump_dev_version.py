@@ -18,7 +18,7 @@ def get_latest_pypi(package, index="https://test.pypi.org/pypi"):
     req = requests.get(url)
     try:
         version = max([Version(v) for v in req.json()['releases'].keys()])
-    except JSONDecodeError:
+    except (JSONDecodeError, KeyError):
         # couldn't find a version, so we're okay
         version = "0.0.0.dev0"
     return str(version)
