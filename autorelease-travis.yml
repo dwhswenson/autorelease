@@ -9,7 +9,7 @@ stages:
     - deploy pypi
 
 import:
-    - dwhswenson/autorelease:travis_stages/deploy_testpypi.yml@v0.4.0
-    - dwhswenson/autorelease:travis_stages/test_testpypi.yml@v0.4.0
-    - dwhswenson/autorelease:travis_stages/cut_release.yml@v0.4.0
-    - dwhswenson/autorelease:travis_stages/deploy_pypi.yml@v0.4.0
+    - dwhswenson/autorelease:travis_stages/deploy_testpypi.yml@main
+    - dwhswenson/autorelease:travis_stages/test_testpypi.yml@main
+    - dwhswenson/autorelease:travis_stages/cut_release.yml@main
+    - dwhswenson/autorelease:travis_stages/deploy_pypi.yml@main
