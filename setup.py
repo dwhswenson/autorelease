@@ -5,7 +5,6 @@ import sys
 
 import fnmatch  # Py 2
 
-from setuptools import setup
 
 def _glob_glob_recursive(directory, pattern):
     # python 2 glob.glob doesn't have a recursive keyword
@@ -120,6 +119,7 @@ def write_installed_version_py(filename="_installed_version.py",
         f.write(content.format(vers=version, git=git_rev, depth=depth))
 
 if __name__ == "__main__":
+    from setuptools import setup
     # TODO: only write version.py under special circumstances
     write_installed_version_py()
     # write_version_py(os.path.join('autorelease', 'version.py'))
