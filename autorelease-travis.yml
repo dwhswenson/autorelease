@@ -1,4 +1,4 @@
-# AUTORELEASE v0.4.0
+# AUTORELEASE v0.4.3.dev0
 # for nonrelease, use @main
 # for release, use v${VERSION}, e.g., v1.0.0
 stages:
