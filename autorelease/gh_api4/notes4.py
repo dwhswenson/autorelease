@@ -9,6 +9,9 @@ import datetime
 from .pull_requests import PRStatus, PR, graphql_get_all_prs
 from .releases import latest_release
 
+import logging
+_logger = logging.getLogger(__name__)
+
 def filter_release_prs(all_prs, prev_release_date, target_branch="main"):
     def is_release_pr(pr):
         return (
@@ -17,19 +20,31 @@ def filter_release_prs(all_prs, prev_release_date, target_branch="main"):
             and pr.target == target_branch
         )
 
-    yield from (pr for pr in all_prs if is_release_pr(pr))
+    for pr in all_prs:
+        _logger.info(f"{pr}")
+        if is_release_pr(pr):
+            _logger.info(f"Including {pr}")
+            yield pr
+        else:
+            _logger.info("Skipping")
 
 
 def prs_since_latest_release(owner, repo, auth, target_branch="main"):
     latest = latest_release(owner, repo, auth)
+    _logger.info(f"Latest release: {latest}")
+
     release_date = latest.date
     all_prs = [PR.from_api_response(pr)
-               for pr in graphql_get_all_prs(owner, repo, auth)]
-    new_prs = filter_release_prs(
+               for pr in graphql_get_all_prs(owner, repo, auth,
+                                             target_branch)]
+
+    _logger.info(f"Loaded {len(all_prs)} PRs")
+    new_prs = list(filter_release_prs(
         all_prs=all_prs,
         prev_release_date=latest.date,
         target_branch=target_branch
-    )
+    ))
+    _logger.info(f"After filtering, found {len(new_prs)} new PRs")
     return new_prs
 
 

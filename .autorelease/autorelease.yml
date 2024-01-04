@@ -12,6 +12,7 @@ repo:
   release-branches:
     - stable
   release-tag: "v{BASE_VERSION}"
+  dev-branch: main
 
 # writing release notes
 notes:

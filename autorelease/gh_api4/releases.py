@@ -24,7 +24,7 @@ class Release(NamedTuple):
 
 RELEASES_QUERY = """
 {
-  repository(name: "openpathsampling", owner: "openpathsampling") {
+  repository(name: "$repo_name", owner: "$repo_owner") {
     releases(orderBy: {field: CREATED_AT, direction: DESC}, first: 100) {
       nodes {
         publishedAt
@@ -42,7 +42,8 @@ RELEASES_QUERY = """
 def latest_release(owner, repo, auth):
     # TODO: support paginated releases
     runner = QueryRunner(RELEASES_QUERY, auth)
-    api_release_info = runner()['data']['repository']['releases']['nodes']
+    result = runner(repo_name=repo, repo_owner=owner)
+    api_release_info = result['data']['repository']['releases']['nodes']
     releases = [Release.from_api(rel) for rel in api_release_info]
     claim_latest = [rel for rel in releases if rel.latest]
     assert len(claim_latest) == 1
