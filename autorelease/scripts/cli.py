@@ -7,6 +7,8 @@ from autorelease.scripts.check import run_checks
 # from autorelease import ReleaseNoteWriter
 from autorelease.gh_api4.notes4 import NotesWriter, prs_since_latest_release
 
+import logging
+
 
 def _find_first_file(pathlist):
     for p in pathlist:
@@ -47,8 +49,11 @@ def load_auth(user_input):
 
 
 @click.group()
-def cli():
-    pass
+@click.option("--loglevel", type=str, default="WARNING")
+def cli(loglevel):
+    logging.basicConfig(level=getattr(logging, loglevel))
+    logger = logging.getLogger("autorelease")
+    logger.setLevel(getattr(logging, loglevel))
 
 @cli.command()
 @click.option('--conf', type=click.File('r'))

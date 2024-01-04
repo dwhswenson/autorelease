@@ -39,13 +39,13 @@ class PR(typing.NamedTuple):
 
 PR_QUERY = """
 {
-  repository(name: "openpathsampling", owner: "openpathsampling") {
+  repository(name: "$repo_name", owner: "$repo_owner") {
     pullRequests(
       orderBy: {field: UPDATED_AT, direction: DESC}
       first: 100
       $after
       states: MERGED
-      baseRefName: "master"
+      baseRefName: "$target_branch"
     ) {
       nodes {
         author {
@@ -82,7 +82,7 @@ PR_QUERY = """
 }
 """
 
-def graphql_get_all_prs(owner, repo, auth):
+def graphql_get_all_prs(owner, repo, auth, target_branch):
     # TODO: query needs to take repo and owner
     def extractor(result):
         return result["data"]["repository"]["pullRequests"]["nodes"]
@@ -101,10 +101,15 @@ def graphql_get_all_prs(owner, repo, auth):
     # actually.. better choice is to post-process to remove inner
     # paginations: get additional labels for anything with more than 100
     # labels
-    result = query_runner(after="")
+    default_kwargs = {
+        'repo_owner': owner,
+        'repo_name': repo,
+        'target_branch': target_branch,
+    }
+    result = query_runner(after="", **default_kwargs)
     extracted_results.extend(extractor(result))
     while cursor := next_page_cursor(result):
-        result = query_runner(after=f'after: "{cursor}"')
+        result = query_runner(after=f'after: "{cursor}"', **default_kwargs)
         extracted_results.extend(extractor(result))
 
     return extracted_results
