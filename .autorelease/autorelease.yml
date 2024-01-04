@@ -12,6 +12,7 @@ repo:
   release-branches:
     - stable
   release-tag: "v{BASE_VERSION}"
+  dev-branch: main
 
 # writing release notes
 notes:
@@ -22,6 +23,9 @@ notes:
       heading: Bugs fixed
     - label: misc PR
       heading: Miscellaneous improvements
+      topics:
+        - label: docs
+          name: Improvements to documentation
 
   standard_contributors:
     - dwhswenson

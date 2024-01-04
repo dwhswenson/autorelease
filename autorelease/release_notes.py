@@ -18,6 +18,7 @@ class ReleaseNoteWriter(GitHubRepoBase):
 
         self.config = config
         self.since_release = since_release
+        import pdb; pdb.set_trace()
         project = self._apply_config_key(project, 'project', ProjectOptions)
         github_user = self._apply_config_key(github_user, 'github_user',
                                              GitHubUser)
