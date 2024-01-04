@@ -4,7 +4,8 @@ import yaml
 
 from autorelease.scripts.vendor import vendor_actions
 from autorelease.scripts.check import run_checks
-from autorelease import ReleaseNoteWriter
+# from autorelease import ReleaseNoteWriter
+from autorelease.gh_api4.notes4 import NotesWriter, prs_since_latest_release
 
 
 def _find_first_file(pathlist):
@@ -64,20 +65,45 @@ def config(conf):
     config = load_config(conf)
     pprint(config)
 
+@cli.command()
+@click.option('--auth', type=click.File('r'))
+def auth(auth):
+    from pprint import pprint
+    auth = load_auth(auth)
+    pprint(auth)
+
 
 @cli.command()
 @click.option('--conf', type=click.File('r'))
 @click.option('--auth', type=click.File('r'))
-@click.option('--since-release', type=str, default=None)
-@click.option('-o', '--output', type=str)
-def notes(conf, auth, since_release, output):
+def notes(conf, auth):
     config = load_config(conf)
     github_user = load_auth(auth)
+    target_branch = config['repo'].get('dev-branch', 'main')
     notes_conf = config['notes']
     notes_conf.update(github_user)
     notes_conf['project'] = config['project']
-    writer = ReleaseNoteWriter(config=notes_conf)
-    writer.write_release_notes(outfile=output)
+    category_labels = {
+        lab['label']: lab['heading'] for lab in notes_conf['labels']
+    }
+    topics = {}
+    for label in notes_conf['labels']:
+        if tops := label.get('topics'):
+            topic_dict = {top['label']: top['name'] for top in tops}
+            topics[label['label']] = topic_dict
+
+    writer = NotesWriter(
+        category_labels=category_labels,
+        topics=topics,
+        standard_contributors=notes_conf['standard_contributors']
+    )
+    new_prs = prs_since_latest_release(
+        owner=config['project']['repo_owner'],
+        repo=config['project']['repo_name'],
+        auth=(None, github_user['github_user']['token']),
+        target_branch=target_branch,
+    )
+    print(writer.write(new_prs))
 
 @click.group()
 def vendor():
