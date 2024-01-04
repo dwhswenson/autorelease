@@ -22,6 +22,9 @@ notes:
       heading: Bugs fixed
     - label: misc PR
       heading: Miscellaneous improvements
+      topics:
+        - label: docs
+          name: Improvements to documentation
 
   standard_contributors:
     - dwhswenson
