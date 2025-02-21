@@ -14,7 +14,7 @@ SETUP_VERSION = get_setup_version(None, directory='.')
 versions = {
     #'package': contact_map.version.version,
     'setup.py': SETUP_VERSION,
-    'conda-recipe': conda_recipe_version('devtools/conda-recipe/meta.yaml'),
+    # 'conda-recipe': conda_recipe_version('devtools/conda-recipe/meta.yaml'),
 }
 
 RELEASE_BRANCHES = ['stable']
