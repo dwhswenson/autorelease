@@ -13,6 +13,8 @@ defaults:
 
 jobs:
   deploy_testpypi:
+    permissions:
+      id-token: write
     if: $${{ github.repository == '$GITHUB_REPO' }}
     runs-on: ubuntu-latest
     name: "Deployment test"
@@ -43,9 +45,8 @@ jobs:
           python setup.py sdist bdist_wheel
           twine check dist/*
         name: "Build and check package"
-      - uses: pypa/gh-action-pypi-publish@master
+      - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: $${{ secrets.testpypi_password }}
           repository_url: https://test.pypi.org/legacy/
         name: "Deploy to testpypi"
   test_testpypi:

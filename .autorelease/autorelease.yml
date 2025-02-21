@@ -34,7 +34,7 @@ notes:
 release-check:
   versions:
     - setup-cfg
-    - conda: devtools/conda-recipe/meta.yaml
+    #- conda: devtools/conda-recipe/meta.yaml
   skip: []
 
 

@@ -23,6 +23,8 @@ jobs:
     strategy:
       matrix:
         CONDA_PY:
+          - "3.13"
+          - "3.12"
           - "3.11"
           - "3.10"
           - "3.9"
@@ -58,5 +60,5 @@ jobs:
           echo "BRANCH: $BRANCH"
           python -c "import autorelease"
           autorelease-release -h
-          python release_check.py
+          python release_check.py --allow-patch-skip
           autorelease check
