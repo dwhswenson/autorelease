@@ -10,6 +10,8 @@ jobs:
     if: $${{ github.repository == '$GITHUB_REPO' }}
     runs-on: ubuntu-latest
     name: "Deploy to PyPI"
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
