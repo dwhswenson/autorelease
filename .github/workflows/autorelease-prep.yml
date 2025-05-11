@@ -1,4 +1,4 @@
-# Vendored from Autorelease 0.6.0
+# Vendored from Autorelease 0.6.1
 # Update by updating Autorelease and running `autorelease vendor actions`
 name: "Autorelease testpypi"
 on:
@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     name: "Deployment test"
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
       - run: |  # TODO: move this to an action
@@ -55,8 +55,8 @@ jobs:
     name: "Test deployed"
     needs: deploy_testpypi
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
       - run: |  # TODO: move this to an action
