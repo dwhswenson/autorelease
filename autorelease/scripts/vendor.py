@@ -14,7 +14,7 @@ import git
 import re
 
 def extract_github_owner_and_repo(url):
-    github_url_re = ".*github.com:(?P<owner>.*)/(?P<repo>.*)"
+    github_url_re = r".*github.com:(?P<owner>.*)/(?P<repo>.*)"
     m = re.match(github_url_re, url)
     if m is None:
         raise ValueError(f"Unable to parse GitHub URL: {url}")
