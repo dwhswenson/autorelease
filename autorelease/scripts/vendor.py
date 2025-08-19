@@ -2,8 +2,11 @@ import string
 try:
     import pathlib
 except ImportError:  # py2
-    import pathlib2
-import pkg_resources
+    import pathlib2 as pathlib
+try:
+    from importlib import resources as importlib_resources
+except ImportError:  # py < 3.7
+    import importlib_resources
 from packaging.version import Version
 import autorelease
 
@@ -11,8 +14,10 @@ import git
 import re
 
 def extract_github_owner_and_repo(url):
-    github_url_re = ".*github.com:(?P<owner>.*)/(?P<repo>.*)"
+    github_url_re = r".*github.com:(?P<owner>.*)/(?P<repo>.*)"
     m = re.match(github_url_re, url)
+    if m is None:
+        raise ValueError(f"Unable to parse GitHub URL: {url}")
     owner = m.group('owner')
     repo = m.group('repo')
     if repo.endswith('.git'):
@@ -70,17 +75,29 @@ def get_substitution_mapping(config=None):
 
 def vendor(resources, base_path, relative_target_dir, substitutions):
     for resource in resources:
-        orig_loc = pkg_resources.resource_filename('autorelease', resource)
-        name = pathlib.Path(orig_loc).name
+        # Use importlib.resources to get the resource content
+        try:
+            # For Python 3.9+
+            resource_files = importlib_resources.files('autorelease')
+            resource_path = resource_files / resource
+            with resource_path.open('r') as rfile:
+                template_content = rfile.read()
+        except AttributeError:
+            # For Python 3.7-3.8
+            with importlib_resources.path('autorelease', resource) as resource_path:
+                with open(resource_path, mode='r') as rfile:
+                    template_content = rfile.read()
+
+        name = pathlib.Path(resource).name
         target_dir = base_path / relative_target_dir
         target_dir.mkdir(parents=True, exist_ok=True)
         target_loc = base_path / relative_target_dir / name
-        # print(f"cp {orig_loc} {target_loc}")
-        with open(orig_loc, mode='r') as rfile:
-            template = string.Template(rfile.read())
+        # print(f"cp {resource} {target_loc}")
+        template = string.Template(template_content)
 
         with open(target_loc, mode='w') as wfile:
             wfile.write(template.substitute(**substitutions))
+
 
 def vendor_actions(base_path):
     resources = ['autorelease-default-env.sh', 'autorelease-prep.yml',
@@ -89,4 +106,3 @@ def vendor_actions(base_path):
     target_dir = pathlib.Path('.github/workflows')
     substitutions = get_substitution_mapping()
     vendor(resources, base_path, target_dir, substitutions)
-

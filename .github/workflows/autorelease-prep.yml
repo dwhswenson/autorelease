@@ -1,4 +1,4 @@
-# Vendored from Autorelease 0.6.1
+# Vendored from Autorelease 0.6.2
 # Update by updating Autorelease and running `autorelease vendor actions`
 name: "Autorelease testpypi"
 on:
