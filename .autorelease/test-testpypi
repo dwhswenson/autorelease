@@ -3,3 +3,4 @@
 echo "Using custom test-testpypi"
 cd ~
 python -c "import autorelease"
+autorelease vendor actions --dry
