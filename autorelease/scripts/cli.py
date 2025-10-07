@@ -115,9 +115,10 @@ def vendor():
     pass
 
 @vendor.command()
-def actions():
+@click.option('--dry', is_flag=True, default=False)
+def actions(dry):
     print("vendoring actions")
-    vendor_actions(base_path='.')
+    vendor_actions(base_path='.', dry=dry)
 
 cli.add_command(vendor)
 
