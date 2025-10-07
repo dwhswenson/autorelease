@@ -57,8 +57,9 @@ def guess_parent_repository(repo_name='.'):
 
 
 def _get_github_repo(config):
-    # TODO: this guessing should be a backup plan; get info from config if
-    # available
+    if "owner" in config and "repo" in config:
+        return config["owner"] + "/" + config["repo"]
+
     owner, repo = guess_parent_repository('.')
     if owner is None or repo is None:
         raise RuntimeError("Unable to determine repository")
@@ -106,10 +107,19 @@ def vendor(resources, base_path, relative_target_dir, substitutions,
                 wfile.write(content)
 
 
-def vendor_actions(base_path, dry=False):
+def vendor_actions(base_path, owner_repo=None, dry=False):
     resources = ['autorelease-default-env.sh', 'autorelease-prep.yml',
                  'autorelease-gh-rel.yml', 'autorelease-deploy.yml']
     resources = ['gh_actions_stages/' + res for res in resources]
     target_dir = pathlib.Path('.github/workflows')
-    substitutions = get_substitution_mapping()
+    if owner_repo:
+        if owner_repo.count('/') != 1:
+            raise ValueError("owner_repo must be in the format 'owner/repo'")
+        owner, repo = owner_repo.split('/')
+        if not owner or not repo:
+            raise ValueError("Both owner and repo must be non-empty in 'owner/repo'")
+        config = {"owner": owner, "repo": repo}
+    else:
+        config = None
+    substitutions = get_substitution_mapping(config)
     vendor(resources, base_path, target_dir, substitutions, dry=dry)

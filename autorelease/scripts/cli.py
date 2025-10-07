@@ -115,10 +115,12 @@ def vendor():
     pass
 
 @vendor.command()
+@click.option('--repo', type=str, default=None,
+              help="GitHub repo in the form owner/repo")
 @click.option('--dry', is_flag=True, default=False)
-def actions(dry):
+def actions(repo, dry):
     print("vendoring actions")
-    vendor_actions(base_path='.', dry=dry)
+    vendor_actions(base_path='.', owner_repo=repo, dry=dry)
 
 cli.add_command(vendor)
 
