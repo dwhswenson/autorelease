@@ -113,7 +113,11 @@ def vendor_actions(base_path, owner_repo=None, dry=False):
     resources = ['gh_actions_stages/' + res for res in resources]
     target_dir = pathlib.Path('.github/workflows')
     if owner_repo:
+        if owner_repo.count('/') != 1:
+            raise ValueError("owner_repo must be in the format 'owner/repo'")
         owner, repo = owner_repo.split('/')
+        if not owner or not repo:
+            raise ValueError("Both owner and repo must be non-empty in 'owner/repo'")
         config = {"owner": owner, "repo": repo}
     else:
         config = None
