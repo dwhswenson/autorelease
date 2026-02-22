@@ -1,17 +1,12 @@
 import argparse
+import os
 import time
-
-try:
-    from configparser import ConfigParser, NoSectionError, NoOptionError
-except ImportError:
-    # py2
-    from ConfigParser import ConfigParser, NoSectionError, NoOptionError
-
 
 from json import JSONDecodeError
 
 from packaging.version import Version
 import requests
+from autorelease.version import get_setup_cfg, get_setup_name, get_setup_version
 
 def get_latest_pypi(package, index="https://test.pypi.org/pypi"):
     url = "/".join([index, package, 'json'])
@@ -59,11 +54,26 @@ def shared_parser():
     parser.add_argument('--get-max', action='store_true')
     return parser
 
+def _setup_path_parts(conf_name):
+    directory, filename = os.path.split(conf_name)
+    if directory == "":
+        directory = "."
+    if filename == "":
+        filename = "setup.cfg"
+    return directory, filename
+
 def get_version_info(conf_name, index):
-    conf = ConfigParser()
-    conf.read(conf_name)
-    v_setup = conf.get('metadata', 'version')
-    package = conf.get('metadata', 'name')
+    directory, filename = _setup_path_parts(conf_name)
+    conf = get_setup_cfg(directory=directory, filename=filename)
+    if conf is None:
+        raise RuntimeError("Unable to find setup config: " + conf_name)
+
+    v_setup = get_setup_version(None, directory=directory, filename=filename)
+    package = get_setup_name(None, directory=directory, filename=filename)
+    if v_setup is None:
+        raise RuntimeError("Missing [metadata] version in " + conf_name)
+    if package is None:
+        raise RuntimeError("Missing [metadata] name in " + conf_name)
     v_pypi = get_latest_pypi(package, index)
     return conf, package, v_setup, v_pypi
 

@@ -4,7 +4,9 @@ from unittest import mock
 import os
 
 
-from autorelease.version import _find_rel_path_for_file
+from autorelease.version import (
+    _find_rel_path_for_file, get_setup_name, get_setup_version
+)
 
 @pytest.mark.parametrize("depth, result", [
     (0, '.'), (1, '..'), (2, '..' + os.sep + '..'),
@@ -25,3 +27,13 @@ def test_find_rel_path_for_file_finds_no_file():
     with mock.patch('autorelease.version.os.path.isfile', lambda x: False):
         assert _find_rel_path_for_file(-1, 'setup.cfg') is None
 
+
+def test_get_setup_name_and_version(tmp_path):
+    setup_cfg = tmp_path / "setup.cfg"
+    setup_cfg.write_text(
+        "[metadata]\n"
+        "name = mypkg\n"
+        "version = 1.2.3.dev0\n"
+    )
+    assert get_setup_name(None, str(tmp_path), "setup.cfg") == "mypkg"
+    assert get_setup_version(None, str(tmp_path), "setup.cfg") == "1.2.3.dev0"

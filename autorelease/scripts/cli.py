@@ -4,6 +4,7 @@ import yaml
 
 from autorelease.scripts.vendor import vendor_actions
 from autorelease.scripts.check import run_checks
+from autorelease.version import get_setup_name, get_setup_version
 # from autorelease import ReleaseNoteWriter
 from autorelease.gh_api4.notes4 import NotesWriter, prs_since_latest_release
 
@@ -76,6 +77,49 @@ def auth(auth):
     from pprint import pprint
     auth = load_auth(auth)
     pprint(auth)
+
+def _conf_parts(conf):
+    directory, filename = os.path.split(conf)
+    if directory == "":
+        directory = "."
+    if filename == "":
+        filename = "setup.cfg"
+    return directory, filename
+
+
+@cli.group()
+def metadata():
+    pass
+
+
+@metadata.command(name="version")
+@click.option("-c", "--conf", type=str, default="setup.cfg",
+              help="setup.cfg file to use")
+def metadata_version(conf):
+    directory, filename = _conf_parts(conf)
+    value = get_setup_version(None, directory=directory, filename=filename)
+    field = "version"
+
+    if value is None:
+        raise click.ClickException(
+            "Missing [metadata] " + field + " in " + conf
+        )
+    click.echo(value)
+
+
+@metadata.command(name="name")
+@click.option("-c", "--conf", type=str, default="setup.cfg",
+              help="setup.cfg file to use")
+def metadata_name(conf):
+    directory, filename = _conf_parts(conf)
+    value = get_setup_name(None, directory=directory, filename=filename)
+    field = "name"
+
+    if value is None:
+        raise click.ClickException(
+            "Missing [metadata] " + field + " in " + conf
+        )
+    click.echo(value)
 
 
 @cli.command()

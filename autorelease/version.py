@@ -114,16 +114,29 @@ def get_setup_cfg(directory, filename="setup.cfg"):
     return conf
 
 
-def get_setup_version(default_version, directory, filename="setup.cfg"):
-    version = default_version
+def get_setup_value(default_value, directory, option, section='metadata',
+                    filename="setup.cfg"):
+    value = default_value
     conf = get_setup_cfg(directory, filename)
     try:
-        version = conf.get('metadata', 'version')
+        value = conf.get(section, option)
     except (NoSectionError, NoOptionError):
-        pass  # version (or metadata) not defined in setup.cfg
+        pass  # option (or section) not defined in setup.cfg
     except AttributeError:
         pass  # no setup.cfg found (conf is None)
-    return version
+    return value
+
+
+def get_setup_version(default_version, directory, filename="setup.cfg"):
+    return get_setup_value(default_version, directory=directory,
+                           option='version', section='metadata',
+                           filename=filename)
+
+
+def get_setup_name(default_name, directory, filename="setup.cfg"):
+    return get_setup_value(default_name, directory=directory,
+                           option='name', section='metadata',
+                           filename=filename)
 
 
 short_version = get_setup_version(_installed_version,
