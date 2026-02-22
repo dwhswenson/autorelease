@@ -5,7 +5,7 @@ EXTRA_TWINE_ARGS="$@"
 python -m pip install twine wheel
 
 bump-dev-version
-python setup.py --version
+autorelease metadata version
 python setup.py sdist bdist_wheel
 
 twine check dist/* || exit 1
