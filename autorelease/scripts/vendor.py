@@ -57,7 +57,7 @@ def guess_parent_repository(repo_name='.'):
 
 
 def _get_github_repo(config):
-    if "owner" in config and "repo" in config:
+    if config and "owner" in config and "repo" in config:
         return config["owner"] + "/" + config["repo"]
 
     owner, repo = guess_parent_repository('.')
