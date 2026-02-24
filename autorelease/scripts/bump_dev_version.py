@@ -66,14 +66,14 @@ def get_version_info(conf_name, index):
     directory, filename = _setup_path_parts(conf_name)
     conf = get_setup_cfg(directory=directory, filename=filename)
     if conf is None:
-        raise RuntimeError("Unable to find setup config: " + conf_name)
+        raise RuntimeError(f"Unable to find setup config: {conf_name}")
 
     v_setup = get_setup_version(None, directory=directory, filename=filename)
     package = get_setup_name(None, directory=directory, filename=filename)
     if v_setup is None:
-        raise RuntimeError("Missing [metadata] version in " + conf_name)
+        raise RuntimeError(f"Missing [metadata] version in {conf_name}")
     if package is None:
-        raise RuntimeError("Missing [metadata] name in " + conf_name)
+        raise RuntimeError(f"Missing [metadata] name in {conf_name}")
     v_pypi = get_latest_pypi(package, index)
     return conf, package, v_setup, v_pypi
 

@@ -3,10 +3,14 @@ import os
 import subprocess
 
 try:
-    from configparser import ConfigParser, NoSectionError, NoOptionError
+    from configparser import (
+        ConfigParser, Error as ConfigParserError, NoSectionError, NoOptionError
+    )
 except ImportError:
     # py2
-    from ConfigParser import ConfigParser, NoSectionError, NoOptionError
+    from ConfigParser import (
+        ConfigParser, Error as ConfigParserError, NoSectionError, NoOptionError
+    )
 
 try:
     from ._installed_version import _installed_version
@@ -109,13 +113,31 @@ def get_setup_cfg(directory, filename="setup.cfg"):
     conf = None
     if os.path.exists(setup_cfg):
         conf = ConfigParser()
-        conf.read(setup_cfg)
+        try:
+            conf.read(setup_cfg)
+        except ConfigParserError:
+            conf = None
 
     return conf
 
 
 def get_setup_value(default_value, directory, option, section='metadata',
                     filename="setup.cfg"):
+    """Get a setup.cfg value or return the provided default.
+
+    Parameters
+    ----------
+    default_value
+        value to return when setup.cfg is missing or does not define field
+    directory : str or int
+        directory for setup.cfg (or search depth if int)
+    option : str
+        field name to retrieve from section
+    section : str
+        section name to query; default 'metadata'
+    filename : str
+        filename for setup.cfg; default 'setup.cfg'
+    """
     value = default_value
     conf = get_setup_cfg(directory, filename)
     try:

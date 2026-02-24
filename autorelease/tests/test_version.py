@@ -37,3 +37,40 @@ def test_get_setup_name_and_version(tmp_path):
     )
     assert get_setup_name(None, str(tmp_path), "setup.cfg") == "mypkg"
     assert get_setup_version(None, str(tmp_path), "setup.cfg") == "1.2.3.dev0"
+
+
+def test_get_setup_name_and_version_missing_file(tmp_path):
+    default_name = "default-name"
+    default_version = "0.0.0"
+    assert get_setup_name(default_name, str(tmp_path), "setup.cfg") == default_name
+    assert get_setup_version(default_version, str(tmp_path), "setup.cfg") == default_version
+
+
+def test_get_setup_name_and_version_missing_fields(tmp_path):
+    setup_cfg_no_name = tmp_path / "setup_no_name.cfg"
+    setup_cfg_no_name.write_text(
+        "[metadata]\n"
+        "version = 2.0.0\n"
+    )
+    assert get_setup_name("default-name", str(tmp_path), "setup_no_name.cfg") == "default-name"
+    assert get_setup_version(None, str(tmp_path), "setup_no_name.cfg") == "2.0.0"
+
+    setup_cfg_no_version = tmp_path / "setup_no_version.cfg"
+    setup_cfg_no_version.write_text(
+        "[metadata]\n"
+        "name = pkg-without-version\n"
+    )
+    assert get_setup_version("0.0.0", str(tmp_path), "setup_no_version.cfg") == "0.0.0"
+    assert get_setup_name(None, str(tmp_path), "setup_no_version.cfg") == "pkg-without-version"
+
+
+def test_get_setup_name_and_version_malformed_cfg(tmp_path):
+    setup_cfg = tmp_path / "setup.cfg"
+    setup_cfg.write_text(
+        "[metadata\n"
+        "name = badpkg\n"
+        "version = 0.0.0\n"
+    )
+
+    assert get_setup_name("default-name", str(tmp_path), "setup.cfg") == "default-name"
+    assert get_setup_version("0.0.0", str(tmp_path), "setup.cfg") == "0.0.0"

@@ -102,7 +102,7 @@ def metadata_version(conf):
 
     if value is None:
         raise click.ClickException(
-            "Missing [metadata] " + field + " in " + conf
+            f"Missing [metadata] {field} in {conf}"
         )
     click.echo(value)
 
@@ -117,7 +117,7 @@ def metadata_name(conf):
 
     if value is None:
         raise click.ClickException(
-            "Missing [metadata] " + field + " in " + conf
+            f"Missing [metadata] {field} in {conf}"
         )
     click.echo(value)
 
