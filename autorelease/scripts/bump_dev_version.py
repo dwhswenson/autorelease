@@ -1,11 +1,11 @@
 import argparse
-import os
 import time
 
 from json import JSONDecodeError
 
 from packaging.version import Version
 import requests
+from autorelease.utils import split_setup_cfg_path
 from autorelease.version import get_setup_cfg, get_setup_name, get_setup_version
 
 def get_latest_pypi(package, index="https://test.pypi.org/pypi"):
@@ -54,16 +54,8 @@ def shared_parser():
     parser.add_argument('--get-max', action='store_true')
     return parser
 
-def _setup_path_parts(conf_name):
-    directory, filename = os.path.split(conf_name)
-    if directory == "":
-        directory = "."
-    if filename == "":
-        filename = "setup.cfg"
-    return directory, filename
-
 def get_version_info(conf_name, index):
-    directory, filename = _setup_path_parts(conf_name)
+    directory, filename = split_setup_cfg_path(conf_name)
     conf = get_setup_cfg(directory=directory, filename=filename)
     if conf is None:
         raise RuntimeError(f"Unable to find setup config: {conf_name}")

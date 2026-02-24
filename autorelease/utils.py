@@ -1,9 +1,9 @@
-import yaml
 import re
 import os
 import sys
 
 def conda_recipe_version(recipe_file):
+    import yaml
     with open(recipe_file) as f:
         dct = yaml.load(f.read(), Loader=yaml.FullLoader)
     return dct['package']['version']
@@ -35,3 +35,12 @@ def _import_setup_py3(directory):
     setup = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(setup)
     return setup
+
+
+def split_setup_cfg_path(conf_name):
+    directory, filename = os.path.split(conf_name)
+    if directory == "":
+        directory = "."
+    if filename == "":
+        filename = "setup.cfg"
+    return directory, filename
