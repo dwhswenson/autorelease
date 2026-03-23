@@ -7,10 +7,10 @@ import setup
 #import contact_map
 from packaging.version import Version
 from autorelease import DefaultCheckRunner, conda_recipe_version
-from autorelease.version import get_setup_version
+from autorelease.version import get_setup_cfg, get_setup_version
 
 repo_path = '.'
-SETUP_VERSION = get_setup_version(None, directory='.')
+SETUP_VERSION = get_setup_version(get_setup_cfg('.'), default_version=None)
 versions = {
     #'package': contact_map.version.version,
     'setup.py': SETUP_VERSION,

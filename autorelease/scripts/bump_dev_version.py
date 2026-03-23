@@ -60,8 +60,8 @@ def get_version_info(conf_name, index):
     if conf is None:
         raise RuntimeError(f"Unable to find setup config: {conf_name}")
 
-    v_setup = get_setup_version(None, directory=directory, filename=filename)
-    package = get_setup_name(None, directory=directory, filename=filename)
+    v_setup = get_setup_version(conf, default_version=None)
+    package = get_setup_name(conf, default_name=None)
     if v_setup is None:
         raise RuntimeError(f"Missing [metadata] version in {conf_name}")
     if package is None:

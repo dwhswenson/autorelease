@@ -121,25 +121,21 @@ def get_setup_cfg(directory, filename="setup.cfg"):
     return conf
 
 
-def get_setup_value(default_value, directory, option, section='metadata',
-                    filename="setup.cfg"):
+def get_setup_value(conf, option, default=None, section='metadata'):
     """Get a setup.cfg value or return the provided default.
 
     Parameters
     ----------
-    default_value
-        value to return when setup.cfg is missing or does not define field
-    directory : str or int
-        directory for setup.cfg (or search depth if int)
+    conf : ConfigParser
+        loaded setup.cfg content to query
     option : str
         field name to retrieve from section
+    default
+        value to return when setup.cfg is missing or does not define field
     section : str
         section name to query; default 'metadata'
-    filename : str
-        filename for setup.cfg; default 'setup.cfg'
     """
-    value = default_value
-    conf = get_setup_cfg(directory, filename)
+    value = default
     try:
         value = conf.get(section, option)
     except (NoSectionError, NoOptionError):
@@ -149,20 +145,20 @@ def get_setup_value(default_value, directory, option, section='metadata',
     return value
 
 
-def get_setup_version(default_version, directory, filename="setup.cfg"):
-    return get_setup_value(default_version, directory=directory,
-                           option='version', section='metadata',
-                           filename=filename)
+def get_setup_version(conf, default_version=None):
+    return get_setup_value(conf, option='version', section='metadata',
+                           default=default_version)
 
 
-def get_setup_name(default_name, directory, filename="setup.cfg"):
-    return get_setup_value(default_name, directory=directory,
-                           option='name', section='metadata',
-                           filename=filename)
+def get_setup_name(conf, default_name=None):
+    return get_setup_value(conf, option='name', section='metadata',
+                           default=default_name)
 
 
-short_version = get_setup_version(_installed_version,
-                                  directory=_version_setup_depth)
+short_version = get_setup_version(
+    get_setup_cfg(directory=_version_setup_depth),
+    default_version=_installed_version,
+)
 _git_version = get_git_version()
 _is_repo = (_git_version != '' and _git_version != "Unknown")
 

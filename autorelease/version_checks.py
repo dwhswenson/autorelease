@@ -3,7 +3,7 @@ from __future__ import print_function
 import re
 import packaging.version as vers
 
-from autorelease.version import get_setup_version  # reuse the vendored
+from autorelease.version import get_setup_cfg, get_setup_version
 from autorelease.utils import conda_recipe_version
 
 import importlib
@@ -17,7 +17,9 @@ def import_and_get(fully_qualified):
 
 
 version_getters = {
-    'setup-cfg': lambda path: get_setup_version(None, path),
+    'setup-cfg': lambda path: get_setup_version(
+        get_setup_cfg(path), default_version=None
+    ),
     'conda': conda_recipe_version,
     'getattr': import_and_get,
 }

@@ -5,7 +5,7 @@ import yaml
 from autorelease.scripts.vendor import vendor_actions
 from autorelease.scripts.check import run_checks
 from autorelease.utils import split_setup_cfg_path
-from autorelease.version import get_setup_name, get_setup_version
+from autorelease.version import get_setup_cfg, get_setup_name, get_setup_version
 # from autorelease import ReleaseNoteWriter
 from autorelease.gh_api4.notes4 import NotesWriter, prs_since_latest_release
 
@@ -89,7 +89,8 @@ def metadata():
               help="setup.cfg file to use")
 def metadata_version(conf):
     directory, filename = split_setup_cfg_path(conf)
-    value = get_setup_version(None, directory=directory, filename=filename)
+    setup_cfg = get_setup_cfg(directory=directory, filename=filename)
+    value = get_setup_version(setup_cfg, default_version=None)
     field = "version"
 
     if value is None:
@@ -104,7 +105,8 @@ def metadata_version(conf):
               help="setup.cfg file to use")
 def metadata_name(conf):
     directory, filename = split_setup_cfg_path(conf)
-    value = get_setup_name(None, directory=directory, filename=filename)
+    setup_cfg = get_setup_cfg(directory=directory, filename=filename)
+    value = get_setup_name(setup_cfg, default_name=None)
     field = "name"
 
     if value is None:
