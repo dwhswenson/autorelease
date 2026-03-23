@@ -5,7 +5,8 @@ import os
 
 
 from autorelease.version import (
-    _find_rel_path_for_file, get_setup_cfg, get_setup_name, get_setup_version
+    ConfigParserError, _find_rel_path_for_file, get_setup_cfg,
+    get_setup_name, get_setup_version
 )
 
 @pytest.mark.parametrize("depth, result", [
@@ -86,6 +87,5 @@ def test_get_setup_name_and_version_malformed_cfg(tmp_path):
         "version = 0.0.0\n"
     )
 
-    conf = get_setup_cfg(str(tmp_path), "setup.cfg")
-    assert get_setup_name(conf, default_name="default-name") == "default-name"
-    assert get_setup_version(conf, default_version="0.0.0") == "0.0.0"
+    with pytest.raises(ConfigParserError):
+        get_setup_cfg(str(tmp_path), "setup.cfg")

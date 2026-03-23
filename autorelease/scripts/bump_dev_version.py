@@ -6,7 +6,9 @@ from json import JSONDecodeError
 from packaging.version import Version
 import requests
 from autorelease.utils import split_setup_cfg_path
-from autorelease.version import get_setup_cfg, get_setup_name, get_setup_version
+from autorelease.version import (
+    ConfigParserError, get_setup_cfg, get_setup_name, get_setup_version
+)
 
 def get_latest_pypi(package, index="https://test.pypi.org/pypi"):
     url = "/".join([index, package, 'json'])
@@ -56,7 +58,12 @@ def shared_parser():
 
 def get_version_info(conf_name, index):
     directory, filename = split_setup_cfg_path(conf_name)
-    conf = get_setup_cfg(directory=directory, filename=filename)
+    try:
+        conf = get_setup_cfg(directory=directory, filename=filename)
+    except ConfigParserError as exc:
+        raise RuntimeError(
+            f"Unable to parse setup config: {conf_name}"
+        ) from exc
     if conf is None:
         raise RuntimeError(f"Unable to find setup config: {conf_name}")
 

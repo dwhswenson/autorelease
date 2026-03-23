@@ -102,6 +102,11 @@ def get_setup_cfg(directory, filename="setup.cfg"):
         directory for setup.cfg, relative to cwd; default '.'
     filename : str
         filename for setup.cfg; default 'setup.cfg'
+
+    Raises
+    ------
+    ConfigParserError
+        if setup.cfg exists but cannot be parsed
     """
     if isinstance(directory, int):
         rel_path = _find_rel_path_for_file(directory, filename)
@@ -113,10 +118,7 @@ def get_setup_cfg(directory, filename="setup.cfg"):
     conf = None
     if os.path.exists(setup_cfg):
         conf = ConfigParser()
-        try:
-            conf.read(setup_cfg)
-        except ConfigParserError:
-            conf = None
+        conf.read(setup_cfg)
 
     return conf
 

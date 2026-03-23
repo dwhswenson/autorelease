@@ -57,3 +57,17 @@ def test_get_version_info_reuses_loaded_conf(tmp_path, monkeypatch):
     assert package == "mypkg"
     assert v_setup == "1.2.3.dev0"
     assert v_pypi == "1.2.2"
+
+
+def test_get_version_info_malformed_cfg(tmp_path):
+    setup_cfg = tmp_path / "setup.cfg"
+    setup_cfg.write_text(
+        "[metadata\n"
+        "name = badpkg\n"
+        "version = 0.0.0\n"
+    )
+
+    with pytest.raises(RuntimeError, match="Unable to parse setup config"):
+        bump_mod.get_version_info(
+            str(setup_cfg), "https://example.invalid/pypi"
+        )
