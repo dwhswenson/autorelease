@@ -4,7 +4,7 @@ if [ -z "$DRY" ]; then
     wait-for-testpypi
 fi
 
-export PROJECT=`python setup.py --name`
+export PROJECT=`autorelease metadata name`
 export VERSION=`pypi-max-version $PROJECT`
 echo "Installing ${PROJECT}==${VERSION} (allowing pre-releases)"
 if [ -z "$DRY" ]; then

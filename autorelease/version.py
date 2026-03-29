@@ -3,10 +3,14 @@ import os
 import subprocess
 
 try:
-    from configparser import ConfigParser, NoSectionError, NoOptionError
+    from configparser import (
+        ConfigParser, Error as ConfigParserError, NoSectionError, NoOptionError
+    )
 except ImportError:
     # py2
-    from ConfigParser import ConfigParser, NoSectionError, NoOptionError
+    from ConfigParser import (
+        ConfigParser, Error as ConfigParserError, NoSectionError, NoOptionError
+    )
 
 try:
     from ._installed_version import _installed_version
@@ -90,14 +94,24 @@ def _find_rel_path_for_file(depth, filename):
 
 
 def get_setup_cfg(directory, filename="setup.cfg"):
-    """Load the setup.cfg as a dict-of-dict.
+    """Load and parse setup.cfg.
 
     Parameters
     ----------
-    directory : str
-        directory for setup.cfg, relative to cwd; default '.'
+    directory : str or int
+        directory for setup.cfg, relative to cwd; or search depth if int
     filename : str
         filename for setup.cfg; default 'setup.cfg'
+
+    Returns
+    -------
+    ConfigParser or None
+        parsed setup.cfg if the file exists; otherwise None
+
+    Raises
+    ------
+    ConfigParserError
+        if setup.cfg exists but cannot be parsed
     """
     if isinstance(directory, int):
         rel_path = _find_rel_path_for_file(directory, filename)
@@ -114,20 +128,44 @@ def get_setup_cfg(directory, filename="setup.cfg"):
     return conf
 
 
-def get_setup_version(default_version, directory, filename="setup.cfg"):
-    version = default_version
-    conf = get_setup_cfg(directory, filename)
+def get_setup_value(conf, option, default=None, section='metadata'):
+    """Get a setup.cfg value or return the provided default.
+
+    Parameters
+    ----------
+    conf : ConfigParser
+        loaded setup.cfg content to query
+    option : str
+        field name to retrieve from section
+    default
+        value to return when setup.cfg is missing or does not define field
+    section : str
+        section name to query; default 'metadata'
+    """
+    value = default
     try:
-        version = conf.get('metadata', 'version')
+        value = conf.get(section, option)
     except (NoSectionError, NoOptionError):
-        pass  # version (or metadata) not defined in setup.cfg
+        pass  # option (or section) not defined in setup.cfg
     except AttributeError:
         pass  # no setup.cfg found (conf is None)
-    return version
+    return value
 
 
-short_version = get_setup_version(_installed_version,
-                                  directory=_version_setup_depth)
+def get_setup_version(conf, default_version=None):
+    return get_setup_value(conf, option='version', section='metadata',
+                           default=default_version)
+
+
+def get_setup_name(conf, default_name=None):
+    return get_setup_value(conf, option='name', section='metadata',
+                           default=default_name)
+
+
+short_version = get_setup_version(
+    get_setup_cfg(directory=_version_setup_depth),
+    default_version=_installed_version,
+)
 _git_version = get_git_version()
 _is_repo = (_git_version != '' and _git_version != "Unknown")
 

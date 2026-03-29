@@ -39,7 +39,7 @@ jobs:
         name: "Install release tools"
       - run: |
           bump-dev-version
-          python setup.py --version
+          autorelease metadata version
         name: "Bump testpypi dev version"
       - run: |
           python setup.py sdist bdist_wheel

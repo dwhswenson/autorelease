@@ -4,6 +4,10 @@ import yaml
 
 from autorelease.scripts.vendor import vendor_actions
 from autorelease.scripts.check import run_checks
+from autorelease.utils import split_setup_cfg_path
+from autorelease.version import (
+    ConfigParserError, get_setup_cfg, get_setup_name, get_setup_version
+)
 # from autorelease import ReleaseNoteWriter
 from autorelease.gh_api4.notes4 import NotesWriter, prs_since_latest_release
 
@@ -76,6 +80,60 @@ def auth(auth):
     from pprint import pprint
     auth = load_auth(auth)
     pprint(auth)
+
+@cli.group()
+def metadata():
+    pass
+
+
+@metadata.command(name="version")
+@click.option("-c", "--conf", type=str, default="setup.cfg",
+              help="setup.cfg file to use")
+def metadata_version(conf):
+    directory, filename = split_setup_cfg_path(conf)
+    try:
+        setup_cfg = get_setup_cfg(directory=directory, filename=filename)
+    except ConfigParserError as exc:
+        raise click.ClickException(
+            f"Unable to parse setup config: {conf}"
+        ) from exc
+    if setup_cfg is None:
+        raise click.ClickException(
+            f"Unable to find setup config: {conf}"
+        )
+    value = get_setup_version(setup_cfg, default_version=None)
+    field = "version"
+
+    if value is None:
+        raise click.ClickException(
+            f"Missing [metadata] {field} in {conf}"
+        )
+    click.echo(value)
+
+
+@metadata.command(name="name")
+@click.option("-c", "--conf", type=str, default="setup.cfg",
+              help="setup.cfg file to use")
+def metadata_name(conf):
+    directory, filename = split_setup_cfg_path(conf)
+    try:
+        setup_cfg = get_setup_cfg(directory=directory, filename=filename)
+    except ConfigParserError as exc:
+        raise click.ClickException(
+            f"Unable to parse setup config: {conf}"
+        ) from exc
+    if setup_cfg is None:
+        raise click.ClickException(
+            f"Unable to find setup config: {conf}"
+        )
+    value = get_setup_name(setup_cfg, default_name=None)
+    field = "name"
+
+    if value is None:
+        raise click.ClickException(
+            f"Missing [metadata] {field} in {conf}"
+        )
+    click.echo(value)
 
 
 @cli.command()
