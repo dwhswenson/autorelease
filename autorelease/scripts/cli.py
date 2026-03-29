@@ -97,6 +97,10 @@ def metadata_version(conf):
         raise click.ClickException(
             f"Unable to parse setup config: {conf}"
         ) from exc
+    if setup_cfg is None:
+        raise click.ClickException(
+            f"Unable to find setup config: {conf}"
+        )
     value = get_setup_version(setup_cfg, default_version=None)
     field = "version"
 
@@ -118,6 +122,10 @@ def metadata_name(conf):
         raise click.ClickException(
             f"Unable to parse setup config: {conf}"
         ) from exc
+    if setup_cfg is None:
+        raise click.ClickException(
+            f"Unable to find setup config: {conf}"
+        )
     value = get_setup_name(setup_cfg, default_name=None)
     field = "name"
 
