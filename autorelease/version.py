@@ -94,14 +94,19 @@ def _find_rel_path_for_file(depth, filename):
 
 
 def get_setup_cfg(directory, filename="setup.cfg"):
-    """Load the setup.cfg as a dict-of-dict.
+    """Load and parse setup.cfg.
 
     Parameters
     ----------
-    directory : str
-        directory for setup.cfg, relative to cwd; default '.'
+    directory : str or int
+        directory for setup.cfg, relative to cwd; or search depth if int
     filename : str
         filename for setup.cfg; default 'setup.cfg'
+
+    Returns
+    -------
+    ConfigParser or None
+        parsed setup.cfg if the file exists; otherwise None
 
     Raises
     ------
